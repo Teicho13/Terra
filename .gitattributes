@@ -1,0 +1,2 @@
+# Apply override / Ignore language statistics to all files in the directory
+External/** linguist-vendored

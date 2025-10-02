@@ -1,72 +1,42 @@
 #include "Application.h"
-
-//#include <GL/glew.h>
+#include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm.hpp>
 
 
 namespace Terra
 {
+    static void GLFWErrorCallback(int error, const char* description)
+    {
+        std::cerr << "GLFW Error: " << description << "\n";
+    }
+    
     Application::Application()
-    { 
-
+    {
+        glfwSetErrorCallback(GLFWErrorCallback);
+        glfwInit();
+        
+        m_Window = std::make_shared<Window>();
+        m_Window->Create();
     }
 
     Application::~Application()
     {
-
+        m_Window->Destroy();
+        glfwTerminate();
     }
 
     void Application::Run()
     {
-        if (!glfwInit())
-        {
-            glfwTerminate();
-        }
-
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-        GLFWwindow* window = glfwCreateWindow(800, 600, "test", NULL, NULL);
-
-        if (!window)
-        {
-            glfwTerminate();
-        }
-
-
-
-        glfwMakeContextCurrent(window);
-        gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-
-
-        //glewExperimental = GL_TRUE;
-
-        //if (glewInit() != GLEW_OK)
-        //{
-        //    glfwDestroyWindow(window);
-        //    glfwTerminate();
-        //}
-
-        int bufferWidth, bufferHeight;
-        glfwGetFramebufferSize(window, &bufferWidth, &bufferHeight);
-
-        glViewport(0, 0, bufferWidth, bufferHeight);
-
-        while (!glfwWindowShouldClose(window))
+        while (!m_Window->ShouldClose())
         {
             glfwPollEvents();
 
+            
             glClearColor(1.f, 0.f, 0.f, 255.f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            glfwSwapBuffers(window);
+            m_Window->Update();
         }
-
-        glfwDestroyWindow(window);
-        glfwTerminate();
     }
 }

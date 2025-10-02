@@ -1,6 +1,7 @@
 #include "Application.h"
 
-#include <GL/glew.h>
+//#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm.hpp>
 
@@ -36,19 +37,22 @@ namespace Terra
             glfwTerminate();
         }
 
-        int bufferWidth, bufferHeight;
-        glfwGetFramebufferSize(window, &bufferWidth, &bufferHeight);
+
 
         glfwMakeContextCurrent(window);
+        gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 
-        glewExperimental = GL_TRUE;
+        //glewExperimental = GL_TRUE;
 
-        if (glewInit() != GLEW_OK)
-        {
-            glfwDestroyWindow(window);
-            glfwTerminate();
-        }
+        //if (glewInit() != GLEW_OK)
+        //{
+        //    glfwDestroyWindow(window);
+        //    glfwTerminate();
+        //}
+
+        int bufferWidth, bufferHeight;
+        glfwGetFramebufferSize(window, &bufferWidth, &bufferHeight);
 
         glViewport(0, 0, bufferWidth, bufferHeight);
 

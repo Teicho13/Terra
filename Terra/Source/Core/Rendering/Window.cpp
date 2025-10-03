@@ -57,7 +57,7 @@ namespace Terra
     {
         int BufferWidth, BufferHeight;
         glfwGetWindowSize(m_Window, &BufferWidth, &BufferHeight);
-        return glm::vec2(BufferWidth, BufferHeight);
+        return {BufferWidth, BufferHeight};
     }
 
     bool Window::ShouldClose() const

@@ -11,6 +11,8 @@ namespace Terra
 
         void Run();
 
+    private:
+        bool m_IsRunning = false;
         std::shared_ptr<Window> m_Window;
     };
 }

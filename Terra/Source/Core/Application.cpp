@@ -2,7 +2,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
+#include <stb_image.h>
 
 namespace Terra
 {
@@ -28,6 +28,10 @@ namespace Terra
         -1.f, -1.f, 0.f,
         1.f, -1.f, 0.f,
     };
+
+    //Testing if stb works
+    int ImgWidth, ImgHeight, numColCh;
+    unsigned char* bytes = stbi_load("test.png", &ImgWidth, &ImgHeight, &numColCh, 0);
     
     static void GLFWErrorCallback(int error, const char* description)
     {

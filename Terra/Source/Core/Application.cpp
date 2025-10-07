@@ -11,14 +11,17 @@ namespace Terra
     //Vertices coordinates triangle
     GLfloat vertices[] =
     {
-        0.f, 1.f, 0.f,
-        -1.f, -1.f, 0.f,
-        1.f, -1.f, 0.f,
+        -0.5f, -0.5f, 0.f,      0.f, 0.f,
+        -0.5f,  0.5f, 0.f,      0.f, 1.f,
+         0.5f,  0.5f, 0.f,      1.f, 1.f,
+         0.5f, -0.5f, 0.0f,     1.f, 0.f
     };
-    
-    //Testing if stb works
-    int ImgWidth, ImgHeight, numColCh;
-    unsigned char* bytes = stbi_load("test.png", &ImgWidth, &ImgHeight, &numColCh, 0);
+
+    GLuint Indices[] =
+    {
+        0, 2, 1, 
+        0, 3, 2
+    };
     
     static void GLFWErrorCallback(int error, const char* description)
     {
@@ -50,21 +53,54 @@ namespace Terra
 
         GLuint VBO;
         GLuint VAO;
+        GLuint EBO;
         
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
+        glGenBuffers(1,&EBO);
+        
 
         glBindVertexArray(VAO);
-        
+
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
+        
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
+        // Gets ID of uniform called "scale"
+        GLuint uniID = glGetUniformLocation(testShader, "scale");
+
+
+        stbi_set_flip_vertically_on_load(true);
+        
+        //Testing if stb works
+        int ImgWidth, ImgHeight, numColCh;
+        unsigned char* bytes = stbi_load("E:/GameDev/Personal/Other/Terra/Terra/Resources/Textures/boomkin.jpg", &ImgWidth, &ImgHeight, &numColCh, 0);
+
+        GLuint TextureID;
+        glGenTextures(1,&TextureID);
+        glBindTexture(GL_TEXTURE_2D, TextureID);
+        
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        
+        glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,ImgWidth,ImgHeight,0,GL_RGB,GL_UNSIGNED_BYTE,bytes);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        stbi_image_free(bytes);
+        
+        GLint textureUniform = glGetUniformLocation(testShader, "tex0");
+        glUseProgram(testShader);
+        glUniform1i(textureUniform, 0);
         
         while (m_IsRunning)
         {
@@ -83,9 +119,15 @@ namespace Terra
             glClear(GL_COLOR_BUFFER_BIT);
             
             glUseProgram(testShader);
-            glBindVertexArray(VAO);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
 
+            //Setting scale
+            glUniform1f(uniID, 0.5f);
+
+            glBindTexture(GL_TEXTURE_2D, TextureID);
+            glBindVertexArray(VAO);
+
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            
             m_Window->Update();
         }
 

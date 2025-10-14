@@ -182,6 +182,7 @@
     <ClInclude Include="Source\Core\Application.h" />
     <ClInclude Include="Source\Core\Rendering\Shader.h" />
     <ClInclude Include="Source\Core\Rendering\Window.h" />
+    <ClInclude Include="Source\Core\DeltaTime.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Core\Application.cpp" />
@@ -189,6 +190,7 @@
     <ClCompile Include="Source\Core\Rendering\Shader.cpp" />
     <ClCompile Include="Source\Core\Rendering\Window.cpp" />
     <ClCompile Include="Source\Core\stb.cpp" />
+    <ClCompile Include="Source\Core\DeltaTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Shaders\DefaultFragment.frag" />

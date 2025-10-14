@@ -4,6 +4,8 @@
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
 #include <filesystem>
+
+#include "DeltaTime.h"
 #include "Rendering/Shader.h"
 
 namespace Terra
@@ -59,7 +61,6 @@ namespace Terra
         glGenBuffers(1, &VBO);
         glGenBuffers(1,&EBO);
         
-
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -102,8 +103,11 @@ namespace Terra
         glUseProgram(testShader);
         glUniform1i(textureUniform, 0);
         
+        DeltaTime deltaTime(120.0);
+        
         while (m_IsRunning)
         {
+            deltaTime.UpdateTime();
             glfwPollEvents();
 
             if (m_Window->ShouldClose())
@@ -111,7 +115,12 @@ namespace Terra
                 m_IsRunning = false;
                 break;
             }
-
+            
+            while (deltaTime.ShouldUpdate())
+            {
+                deltaTime.ReduceAccumulation();
+            }
+            
             const auto WindowBuffer = m_Window->GetWindowBuffer();
             glViewport(0, 0, static_cast<GLsizei>(WindowBuffer.x), static_cast<GLsizei>(WindowBuffer.y));
             
@@ -120,9 +129,7 @@ namespace Terra
             
             glUseProgram(testShader);
 
-            //Setting scale
-            glUniform1f(uniID, 0.5f);
-
+            //Set vertex uniform values
             glBindTexture(GL_TEXTURE_2D, TextureID);
             glBindVertexArray(VAO);
 

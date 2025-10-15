@@ -1,4 +1,4 @@
 # Apply override / Ignore language statistics to all files in the directory
 External/** linguist-vendored
-Terra/Source/Core/glad.c linguist-detectable
-Terra/Source/Core/stb.cpp linguist-detectable
+Terra/Source/Core/glad.c linguist-vendored
+Terra/Source/Core/stb.cpp linguist-vendored

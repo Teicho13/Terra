@@ -9,7 +9,7 @@ namespace Terra
         void UpdateTime();
         void ReduceAccumulation();
         
-        double Get() const;
+        float Get() const;
         bool ShouldUpdate() const;
         
     private:

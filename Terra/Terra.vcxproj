@@ -183,6 +183,7 @@
     <ClInclude Include="Source\Core\Rendering\Shader.h" />
     <ClInclude Include="Source\Core\Rendering\Window.h" />
     <ClInclude Include="Source\Core\DeltaTime.h" />
+    <ClInclude Include="Source\Core\Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Core\Application.cpp" />

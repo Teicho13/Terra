@@ -27,8 +27,8 @@ namespace Terra
         m_Accumulator -= m_FrameTime;
     }
 
-    double DeltaTime::Get() const
+    float DeltaTime::Get() const
     {
-        return m_FrameTime;
+        return static_cast<float>(m_FrameTime);
     }
 }

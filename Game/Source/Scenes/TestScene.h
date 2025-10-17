@@ -9,6 +9,9 @@ public:
     void Update(float DeltaTime) override;
     void Render() override;
 
+    void OnInputPressed(int key, int scancode, int mods) override;
+    void OnInputReleased(int key, int scancode, int mods) override;
+
 private:
     unsigned int m_TestShader;
     unsigned int m_TestVBO;

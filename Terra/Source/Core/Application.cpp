@@ -17,6 +17,54 @@ namespace Terra
     {
         std::cerr << "GLFW Error: " << description << "\n";
     }
+
+    static void GLFWWindowResizeCallback(GLFWwindow* window, const GLsizei width, const GLsizei height)
+    {
+        //Make sure we have the correct window size.
+        glViewport(0, 0, width, height);
+    }
+
+    static void GLFWKeyCallback(GLFWwindow* window, const int key, const int scancode, const int action, const int mods)
+    {
+        for (const std::unique_ptr<Scene>& CurrentScene : Application::GetApplication()->GetScenes())
+        {
+            switch (action)
+            {
+                case GLFW_PRESS:
+                    CurrentScene->OnInputPressed(key,scancode, mods);
+                break;
+                
+                case GLFW_REPEAT:
+                    CurrentScene->OnInputHeld(key,scancode, mods);
+                break;
+                
+                case GLFW_RELEASE:
+                    CurrentScene->OnInputReleased(key,scancode, mods);
+                break;
+
+                default:
+                break;
+            }
+            
+        }
+    }
+
+    static void GLFWMouseButtonCallback(GLFWwindow* window, const int button, const int action, const int mods)
+    {
+        for (const std::unique_ptr<Scene>& CurrentScene : Application::GetApplication()->GetScenes())
+        {
+            if (action == GLFW_PRESS)
+            {
+               CurrentScene->OnMouseClicked(button, mods);
+            }
+
+            if (action == GLFW_RELEASE)
+            {
+               CurrentScene->OnMouseReleased(button, mods);
+            }
+        }
+        
+    }
     
     Application::Application()
     {
@@ -32,6 +80,11 @@ namespace Terra
         //Create main window
         m_Window = std::make_shared<Window>();
         m_Window->Create();
+
+        //Setup callback events
+        glfwSetWindowSizeCallback(m_Window->GetWindow(), GLFWWindowResizeCallback);
+        glfwSetKeyCallback(m_Window->GetWindow(), GLFWKeyCallback);
+        glfwSetMouseButtonCallback(m_Window->GetWindow(), GLFWMouseButtonCallback);
 
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -98,12 +151,17 @@ namespace Terra
         }
     }
 
+    std::vector<std::unique_ptr<Scene>>& Application::GetScenes()
+    {
+        return m_Scenes;
+    }
+
     glm::vec2 Application::GetWindowBuffer() const
     {
         return m_Window->GetWindowBuffer();
     }
 
-    Application* Application::Get()
+    Application* Application::GetApplication()
     {
         assert(s_Application);
         return s_Application;

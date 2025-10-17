@@ -6,6 +6,7 @@
 #include "Rendering/Window.h"
 namespace Terra 
 {
+    
     class Application
     {
     public:
@@ -13,10 +14,12 @@ namespace Terra
         ~Application();
 
         void Run();
+        std::vector<std::unique_ptr<Scene>>& GetScenes();
         
         glm::vec2 GetWindowBuffer() const;
-        static Application* Get();
+        static Application* GetApplication();
         static float GetTime();
+        
 
         template <typename TScene>
         requires(std::is_base_of_v<Scene, TScene>)

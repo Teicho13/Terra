@@ -10,6 +10,7 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <iostream>
 
 //Vertices coordinates square
 GLfloat vertices[] =
@@ -115,12 +116,10 @@ void TestScene::Update(float DeltaTime)
     scale = (0.1f + amp) + amp * std::sin(Terra::Application::GetTime());
 }
 
+bool ButtonWasPressed = false;
+
 void TestScene::Render()
 {
-    //Make sure we have the correct window size.
-    const auto WindowBuffer = Terra::Application::Get()->GetWindowBuffer();
-    glViewport(0, 0, static_cast<GLsizei>(WindowBuffer.x), static_cast<GLsizei>(WindowBuffer.y));
-
     //Activate our shader.
     glUseProgram(m_TestShader);
 
@@ -141,8 +140,25 @@ void TestScene::Render()
 
     ImGui::Begin("Window");
     ImGui::Text("Image Scale: %f", scale);
+    ImGui::Text("E is pressed: %s", ButtonWasPressed ? "true" : "false");
     ImGui::End();
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void TestScene::OnInputPressed(int key, int scancode, int mods)
+{
+    if (key == GLFW_KEY_E)
+    {
+        ButtonWasPressed = true;
+    }
+}
+
+void TestScene::OnInputReleased(int key, int scancode, int mods)
+{
+    if (key == GLFW_KEY_E)
+    {
+        ButtonWasPressed = false;
+    }
 }

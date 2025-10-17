@@ -2,3 +2,4 @@
 External/** linguist-vendored
 Terra/Source/Core/glad.c linguist-vendored
 Terra/Source/Core/stb.cpp linguist-vendored
+Terra/imgui/** linguist-vendored

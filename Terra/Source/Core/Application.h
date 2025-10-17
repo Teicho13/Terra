@@ -15,7 +15,7 @@ namespace Terra
         void Run();
         
         glm::vec2 GetWindowBuffer() const;
-        static Application* get();
+        static Application* Get();
         static float GetTime();
 
         template <typename TScene>

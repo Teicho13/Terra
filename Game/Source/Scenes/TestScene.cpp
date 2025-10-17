@@ -7,7 +7,11 @@
 
 #include "Core/Application.h"
 
-//Vertices coordinates triangle
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
+//Vertices coordinates square
 GLfloat vertices[] =
 {
     -0.5f, -0.5f, 0.f,      0.f, 0.f,
@@ -16,7 +20,7 @@ GLfloat vertices[] =
      0.5f, -0.5f, 0.0f,     1.f, 0.f
 };
 
-//Order in which the vertices will be drawed (optimization)
+//Order in which the vertices will be drawn (optimization)
 GLuint Indices[] =
 {
     0, 2, 1, 
@@ -114,7 +118,7 @@ void TestScene::Update(float DeltaTime)
 void TestScene::Render()
 {
     //Make sure we have the correct window size.
-    const auto WindowBuffer = Terra::Application::get()->GetWindowBuffer();
+    const auto WindowBuffer = Terra::Application::Get()->GetWindowBuffer();
     glViewport(0, 0, static_cast<GLsizei>(WindowBuffer.x), static_cast<GLsizei>(WindowBuffer.y));
 
     //Activate our shader.
@@ -130,4 +134,15 @@ void TestScene::Render()
 
     //Draw all vertices.
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("Window");
+    ImGui::Text("Image Scale: %f", scale);
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

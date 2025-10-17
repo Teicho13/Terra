@@ -7,6 +7,10 @@
 
 #include "DeltaTime.h"
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 namespace Terra
 {
     static void GLFWErrorCallback(int error, const char* description)
@@ -28,10 +32,21 @@ namespace Terra
         //Create main window
         m_Window = std::make_shared<Window>();
         m_Window->Create();
+
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        ImGui::StyleColorsDark();
+        ImGui_ImplGlfw_InitForOpenGL(m_Window->GetWindow(), true);
+        ImGui_ImplOpenGL3_Init("#version 330");
     }
 
     Application::~Application()
     {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
+
         m_Window->Destroy();
         glfwTerminate();
     }
@@ -42,7 +57,6 @@ namespace Terra
         
         //DeltaTime object with target FPS
         DeltaTime deltaTime(120.0);
-
         
         while (m_IsRunning)
         {
@@ -79,7 +93,7 @@ namespace Terra
             {
                 CurrentScene->Render();
             }
-            
+
             m_Window->Update();
         }
     }
@@ -89,7 +103,7 @@ namespace Terra
         return m_Window->GetWindowBuffer();
     }
 
-    Application* Application::get()
+    Application* Application::Get()
     {
         assert(s_Application);
         return s_Application;

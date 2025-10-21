@@ -29,8 +29,6 @@ GLuint Indices[] =
 };
 
 //Temporary variables
-
-glm::mat4 trans = glm::mat4(1.0f);
 float scale = 1.0f;
 
 TestScene::TestScene()
@@ -93,7 +91,10 @@ TestScene::TestScene()
     glUseProgram(m_TestShader);
     glUniform1i(textureUniform, 0);
     
-    m_TransformUniformID = glGetUniformLocation(m_TestShader, "trans");
+    m_MatrixUniformID = glGetUniformLocation(m_TestShader, "projectionViewMatrix");
+
+    //m_camera.SetRotation(45.f);
+    m_camera.SetPosition({0.5f,0.5f,0.0f});
 }
 
 TestScene::~TestScene()
@@ -109,9 +110,7 @@ TestScene::~TestScene()
 
 void TestScene::Update(float DeltaTime)
 {
-    //Rotate object and scale it for testing.
-    
-    trans = glm::rotate(trans, DeltaTime * 0.3f,glm::vec3(0.0f, 0.0f, 1.0f));
+    //scale it for testing.
     constexpr float amp = (1.0f - 0.1f) / 2.0f;
     scale = (0.1f + amp) + amp * std::sin(Terra::Application::GetTime());
 }
@@ -123,9 +122,13 @@ void TestScene::Render()
     //Activate our shader.
     glUseProgram(m_TestShader);
 
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 projection = glm::mat4(1.0f);
+
     //Set vertex uniform values
     glUniform1f(m_UniformID, scale);
-    glUniformMatrix4fv(m_TransformUniformID, 1, GL_FALSE, glm::value_ptr(trans));
+    glUniformMatrix4fv(m_MatrixUniformID, 1, GL_FALSE, glm::value_ptr(m_camera.GetProjectionViewMatrix()));
 
     //Bind Texture and VAO objects in order for OpenGL to use it. 
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
@@ -139,8 +142,9 @@ void TestScene::Render()
     ImGui::NewFrame();
 
     ImGui::Begin("Window");
-    ImGui::Text("Image Scale: %f", scale);
+    ImGui::Text("Image Scale: %.2f", scale);
     ImGui::Text("E is pressed: %s", ButtonWasPressed ? "true" : "false");
+    ImGui::Text("Camera Position: X: %.2f Y: %.2f Z: %.2f", m_camera.GetPosition().x,m_camera.GetPosition().y,m_camera.GetPosition().z);
     ImGui::End();
 
     ImGui::Render();
@@ -153,6 +157,20 @@ void TestScene::OnInputPressed(int key, int scancode, int mods)
     {
         ButtonWasPressed = true;
     }
+
+    if (key == GLFW_KEY_A)
+    {
+        auto newPos = m_camera.GetPosition();
+        newPos.x -= 0.05f;
+        m_camera.SetPosition(newPos);
+    }
+
+    if (key == GLFW_KEY_D)
+    {
+        auto newPos = m_camera.GetPosition();
+        newPos.x += 0.05f;
+        m_camera.SetPosition(newPos);
+    }
 }
 
 void TestScene::OnInputReleased(int key, int scancode, int mods)
@@ -160,5 +178,22 @@ void TestScene::OnInputReleased(int key, int scancode, int mods)
     if (key == GLFW_KEY_E)
     {
         ButtonWasPressed = false;
+    }
+}
+
+void TestScene::OnInputHeld(int key, int scancode, int mods)
+{
+    if (key == GLFW_KEY_A)
+    {
+        auto newPos = m_camera.GetPosition();
+        newPos.x -= 0.05f;
+        m_camera.SetPosition(newPos);
+    }
+
+    if (key == GLFW_KEY_D)
+    {
+        auto newPos = m_camera.GetPosition();
+        newPos.x += 0.05f;
+        m_camera.SetPosition(newPos);
     }
 }

@@ -6,13 +6,13 @@ layout (location = 1) in vec2 aTex;
 //texture coordinate output for fragment shader
 out vec2 texCoord;
 
-uniform mat4 trans;
+uniform mat4 projectionViewMatrix;
 
 //Scale for vertices
 uniform float scale;
 
 void main()
 {
-    gl_Position = trans * vec4(aPos * scale, 1.0f);
+    gl_Position = projectionViewMatrix * vec4(aPos * scale, 1.0f);
     texCoord = aTex;
 }

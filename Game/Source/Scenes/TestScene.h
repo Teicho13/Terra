@@ -1,5 +1,7 @@
 #pragma once
 #include "Core/Scene.h"
+#include "Core/Rendering/Camera.h"
+
 class TestScene : public Terra::Scene
 {
 public:
@@ -9,17 +11,23 @@ public:
     void Update(float DeltaTime) override;
     void Render() override;
 
+
+    void UpdateCameraPos();
+
     void OnInputPressed(int key, int scancode, int mods) override;
     void OnInputReleased(int key, int scancode, int mods) override;
+    void OnInputHeld(int key, int scancode, int mods) override;
 
 private:
+    Terra::Camera m_camera;
+    
     unsigned int m_TestShader;
     unsigned int m_TestVBO;
     unsigned int m_TestVAO;
     unsigned int m_TestEBO;
     unsigned int m_TextureID;
     int m_UniformID;
-
-    int m_TransformUniformID;
+    
+    int m_MatrixUniformID;
     
 };

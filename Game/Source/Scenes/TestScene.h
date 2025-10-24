@@ -1,6 +1,8 @@
 #pragma once
 #include "Core/Scene.h"
 #include "Core/Rendering/Camera.h"
+#include "Core/Rendering/Texture.h"
+#include "Core/Rendering/VertexArray.h"
 
 class TestScene : public Terra::Scene
 {
@@ -20,12 +22,10 @@ public:
 
 private:
     Terra::Camera m_camera;
+    Terra::VertexArray m_VAO;
+    Terra::Texture m_TestTexture;
     
     unsigned int m_TestShader;
-    unsigned int m_TestVBO;
-    unsigned int m_TestVAO;
-    unsigned int m_TestEBO;
-    unsigned int m_TextureID;
     int m_UniformID;
     
     int m_MatrixUniformID;

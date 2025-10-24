@@ -13,6 +13,8 @@
 
 namespace Terra
 {
+    static Application* s_Application;
+    
     static void GLFWErrorCallback(int error, const char* description)
     {
         std::cerr << "GLFW Error: " << description << "\n";
@@ -100,6 +102,7 @@ namespace Terra
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
 
+        m_Scenes.clear();
         m_Window->Destroy();
         glfwTerminate();
     }

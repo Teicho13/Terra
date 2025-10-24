@@ -31,8 +31,6 @@ namespace Terra
         std::shared_ptr<Window> m_Window;
         std::vector<std::unique_ptr<Scene>> m_Scenes;
     };
-
-    inline Application* s_Application = nullptr;
 }
 
 

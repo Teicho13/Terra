@@ -6,14 +6,20 @@ namespace Terra
     class Texture
     {
     public:
-        Texture() = default;
         Texture(const std::filesystem::path& ImagePath);
         ~Texture();
-        void CreateTexture(const std::filesystem::path& ImagePath);
-        void Bind() const;
+        
+        void Bind(unsigned int slot) const;
         void Unbind() const;
+
+        int GetWidth() const { return m_Width; }
+        int GetHeight() const { return m_Height; }
     private:
-        unsigned int m_ID = 0;
+        unsigned int m_ID;
+        std::string m_FilePath;
+        int m_Width;
+        int m_Height;
+        int m_Channels;
     };
 }
 

@@ -191,6 +191,7 @@
     <ClInclude Include="Source\Core\Application.h" />
     <ClInclude Include="Source\Core\Rendering\Buffer.h" />
     <ClInclude Include="Source\Core\Rendering\Camera.h" />
+    <ClInclude Include="Source\Core\Rendering\Renderer.h" />
     <ClInclude Include="Source\Core\Rendering\Shader.h" />
     <ClInclude Include="Source\Core\Rendering\Texture.h" />
     <ClInclude Include="Source\Core\Rendering\VertexArray.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="Source\Core\glad.c" />
     <ClCompile Include="Source\Core\Rendering\Buffer.cpp" />
     <ClCompile Include="Source\Core\Rendering\Camera.cpp" />
+    <ClCompile Include="Source\Core\Rendering\Renderer.cpp" />
     <ClCompile Include="Source\Core\Rendering\Shader.cpp" />
     <ClCompile Include="Source\Core\Rendering\Texture.cpp" />
     <ClCompile Include="Source\Core\Rendering\VertexArray.cpp" />

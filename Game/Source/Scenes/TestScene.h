@@ -21,6 +21,7 @@ public:
     void OnInputHeld(int key, int scancode, int mods) override;
 
 private:
+    
     Terra::Camera m_camera;
     Terra::VertexArray m_VAO;
     Terra::Texture m_TestTexture;

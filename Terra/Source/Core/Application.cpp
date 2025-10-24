@@ -11,6 +11,8 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include "Rendering/Renderer.h"
+
 namespace Terra
 {
     static Application* s_Application;
@@ -128,6 +130,8 @@ namespace Terra
                 break;
             }
 
+            Renderer::Clear();
+
             //In the case we fall behind, keep updating until we are caught up otherwise we update on a fixed time.
             while (deltaTime.ShouldUpdate())
             {
@@ -140,11 +144,6 @@ namespace Terra
             }
 
             //Rendering does not follow fixed timing
-
-            //Clear screen
-            glClearColor(0.f, 0.1f, 0.2f, 255.f);
-            glClear(GL_COLOR_BUFFER_BIT);
-            
             for (const std::unique_ptr<Scene>& CurrentScene : m_Scenes)
             {
                 CurrentScene->Render();

@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include "Core/Rendering/Buffer.h"
+#include "Core/Rendering/Renderer.h"
 
 //Vertices coordinates square
 GLfloat vertices[] =
@@ -34,6 +35,7 @@ GLuint Indices[] =
 float scale = 1.0f;
 
 TestScene::TestScene()
+    : m_TestTexture(std::filesystem::path("E:/GameDev/Personal/Other/Terra/Terra/Resources/Textures/boomkin.jpg"))
 {
     //Create shader using default vertex and fragment (currently hardcoded location)
     std::filesystem::path VertexPath("E:/GameDev/Personal/Other/Terra/Terra/Resources/Shaders/DefaultVertex.vert");
@@ -57,11 +59,7 @@ TestScene::TestScene()
     vb.Unbind();
     m_VAO.Unbind();
     ib.Unbind();
-
-    //Load test image
-    std::filesystem::path ImagePath("E:/GameDev/Personal/Other/Terra/Terra/Resources/Textures/boomkin.jpg");
-    m_TestTexture.CreateTexture(ImagePath);
-
+    
     // Gets ID of uniform called "scale"
     m_UniformID = glGetUniformLocation(m_TestShader, "scale");
     
@@ -90,19 +88,11 @@ bool ButtonWasPressed = false;
 
 void TestScene::Render()
 {
-    //Activate our shader.
-    glUseProgram(m_TestShader);
-    
+    Terra::Renderer::Draw(m_VAO,m_TestTexture,m_TestShader);
+
     //Set vertex uniform values
     glUniform1f(m_UniformID, scale);
     glUniformMatrix4fv(m_MatrixUniformID, 1, GL_FALSE, glm::value_ptr(m_camera.GetProjectionViewMatrix()));
-
-    //Bind Texture and VAO objects in order for OpenGL to use it. 
-    m_TestTexture.Bind();
-    m_VAO.Bind();
-
-    //Draw all vertices.
-    glDrawElements(GL_TRIANGLES, sizeof(Indices), GL_UNSIGNED_INT, 0);
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

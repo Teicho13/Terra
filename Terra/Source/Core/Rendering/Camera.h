@@ -8,14 +8,17 @@ namespace Terra
     public:
         Camera();
         void SetPosition(const glm::vec3& position) {m_Position = position; UpdateViewMatrix();}
-        void SetRotation(float rotation) { m_Rotation = rotation; UpdateViewMatrix(); }
+        void SetRotation(const float rotation) { m_Rotation = rotation; UpdateViewMatrix(); }
+        void SetZoomLevel(const float zoomLevel) { m_ZoomLevel = std::max(zoomLevel, 0.1f); UpdateViewMatrix(); }
         
         const glm::vec3& GetPosition() const { return m_Position; }
         float GetRotation() const { return m_Rotation; }
+        float GetZoomLevel() const { return m_ZoomLevel; }
 
         const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
         const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
         const glm::mat4& GetProjectionViewMatrix() const { return m_ProjectionViewMatrix; }
+
         
     protected:
 
@@ -27,6 +30,7 @@ namespace Terra
         
         glm::vec3 m_Position {0.0f,0.0f,0.0f};
         float m_Rotation = 0.0f;
+        float m_ZoomLevel = 1.0f;
     }; 
 }
 

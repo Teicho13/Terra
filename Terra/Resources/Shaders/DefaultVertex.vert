@@ -8,11 +8,8 @@ out vec2 texCoord;
 
 uniform mat4 projectionViewMatrix;
 
-//Scale for vertices
-uniform float scale;
-
 void main()
 {
-    gl_Position = projectionViewMatrix * vec4(aPos * scale, 1.0f);
+    gl_Position = projectionViewMatrix * vec4(aPos, 1.0f);
     texCoord = aTex;
 }

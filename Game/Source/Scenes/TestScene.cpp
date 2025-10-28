@@ -18,10 +18,10 @@
 //Vertices coordinates square
 GLfloat vertices[] =
 {
-    -0.5f, -0.5f, 0.f,      0.f, 0.f,
-    -0.5f,  0.5f, 0.f,      0.f, 1.f,
-     0.5f,  0.5f, 0.f,      1.f, 1.f,
-     0.5f, -0.5f, 0.0f,     1.f, 0.f
+    -50.0f, -50.0f, 0.f,      0.f, 0.f,
+    -50.0f,  50.0f, 0.f,      0.f, 1.f,
+     50.0f,  50.0f, 0.f,      1.f, 1.f,
+     50.0f, -50.0f, 0.0f,     1.f, 0.f
 };
 
 //Order in which the vertices will be drawn (optimization)
@@ -30,9 +30,6 @@ GLuint Indices[] =
     0, 2, 1, 
     0, 3, 2
 };
-
-//Temporary variables
-float scale = 1.0f;
 
 TestScene::TestScene()
     : m_TestTexture(std::filesystem::path("E:/GameDev/Personal/Other/Terra/Terra/Resources/Textures/boomkin.jpg"))
@@ -56,12 +53,9 @@ TestScene::TestScene()
     m_VAO.AddAttribute(vb,{.count = 2, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = 5 * sizeof(float), .offset = (void*)(3 * sizeof(float))});
     
     //Unbind all objects (order matters)
-    vb.Unbind();
     m_VAO.Unbind();
+    vb.Unbind();
     ib.Unbind();
-    
-    // Gets ID of uniform called "scale"
-    m_UniformID = glGetUniformLocation(m_TestShader, "scale");
     
     //Get shader texture uniform variable location (Tex 0 - 16).
     GLint textureUniform = glGetUniformLocation(m_TestShader, "tex0");
@@ -79,29 +73,41 @@ TestScene::~TestScene()
 
 void TestScene::Update(float DeltaTime)
 {
-    //scale it for testing.
-    constexpr float amp = (1.0f - 0.1f) / 2.0f;
-    scale = (0.1f + amp) + amp * std::sin(Terra::Application::GetTime());
 }
 
+//Temp variables
 bool ButtonWasPressed = false;
+glm::vec3 ModelTranslationA(50.0f, 50.0f, 0.0f);
+glm::vec3 ModelTranslationB(150.0f, 150.0f, 0.0f);
 
 void TestScene::Render()
 {
+    glUseProgram(m_TestShader);
+    
+    //Set vertex uniform values
+    const glm::mat4 ModelA = glm::translate(glm::mat4(1.f), ModelTranslationA);
+    const glm::mat4 MVPA = m_camera.GetProjectionViewMatrix() * ModelA;
+    glUniformMatrix4fv(m_MatrixUniformID, 1, GL_FALSE, glm::value_ptr(MVPA));
+
     Terra::Renderer::Draw(m_VAO,m_TestTexture,m_TestShader);
 
-    //Set vertex uniform values
-    glUniform1f(m_UniformID, scale);
-    glUniformMatrix4fv(m_MatrixUniformID, 1, GL_FALSE, glm::value_ptr(m_camera.GetProjectionViewMatrix()));
+    const glm::mat4 ModelB = glm::translate(glm::mat4(1.f), ModelTranslationB);
+    const glm::mat4 MVPB = m_camera.GetProjectionViewMatrix() * ModelB;
+    glUniformMatrix4fv(m_MatrixUniformID, 1, GL_FALSE, glm::value_ptr(MVPB));
+
+    Terra::Renderer::Draw(m_VAO,m_TestTexture,m_TestShader);
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
     ImGui::Begin("Window");
-    ImGui::Text("Image Scale: %.2f", scale);
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     ImGui::Text("E is pressed: %s", ButtonWasPressed ? "true" : "false");
     ImGui::Text("Camera Position: X: %.2f Y: %.2f Z: %.2f", m_camera.GetPosition().x,m_camera.GetPosition().y,m_camera.GetPosition().z);
+    ImGui::Text("Camera ZoomLevel: %.2f", m_camera.GetZoomLevel());
+    ImGui::SliderFloat3("Model A Translation", &ModelTranslationA.x , 0.f,1280.f);
+    ImGui::SliderFloat3("Model B Translation", &ModelTranslationB.x , 0.f,1280.f);
     ImGui::End();
 
     ImGui::Render();
@@ -118,15 +124,27 @@ void TestScene::OnInputPressed(int key, int scancode, int mods)
     if (key == GLFW_KEY_A)
     {
         auto newPos = m_camera.GetPosition();
-        newPos.x -= 0.05f;
+        newPos.x -= 1.f;
         m_camera.SetPosition(newPos);
     }
 
     if (key == GLFW_KEY_D)
     {
         auto newPos = m_camera.GetPosition();
-        newPos.x += 0.05f;
+        newPos.x += 1.f;
         m_camera.SetPosition(newPos);
+    }
+
+    if (key == GLFW_KEY_EQUAL)
+    {
+        float zoom = m_camera.GetZoomLevel();
+        m_camera.SetZoomLevel(zoom + 0.1f);
+    }
+
+    if (key == GLFW_KEY_MINUS)
+    {
+        float zoom = m_camera.GetZoomLevel();
+        m_camera.SetZoomLevel(zoom - 0.1f);
     }
 }
 
@@ -143,14 +161,14 @@ void TestScene::OnInputHeld(int key, int scancode, int mods)
     if (key == GLFW_KEY_A)
     {
         auto newPos = m_camera.GetPosition();
-        newPos.x -= 0.05f;
+        newPos.x -= 1.f;
         m_camera.SetPosition(newPos);
     }
 
     if (key == GLFW_KEY_D)
     {
         auto newPos = m_camera.GetPosition();
-        newPos.x += 0.05f;
+        newPos.x += 1.0f;
         m_camera.SetPosition(newPos);
     }
 }

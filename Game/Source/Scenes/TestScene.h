@@ -27,8 +27,6 @@ private:
     Terra::Texture m_TestTexture;
     
     unsigned int m_TestShader;
-    int m_UniformID;
-    
     int m_MatrixUniformID;
     
 };

@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Scene.h"
 #include "Core/Rendering/Camera.h"
+#include "Core/Rendering/Shader.h"
 #include "Core/Rendering/Texture.h"
 #include "Core/Rendering/VertexArray.h"
 
@@ -26,8 +27,5 @@ private:
     Terra::VertexArray m_VAO;
     Terra::Texture m_TestTexture;
     Terra::VertexBuffer* m_VertexBuffer = nullptr;
-    
-    unsigned int m_TestShader;
-    int m_MatrixUniformID;
-    
+    Terra::Shader* m_Shader = nullptr;
 };

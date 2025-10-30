@@ -14,10 +14,10 @@ void Terra::Renderer::Draw(VertexArray& va, const Texture& tx, unsigned int shad
     glDrawElements(GL_TRIANGLES, 6 * sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 }
 
-void Terra::Renderer::Draw(VertexArray& va, const Texture& tx, unsigned int shaderID, int amount)
+void Terra::Renderer::Draw(VertexArray& va, const Texture& tx, Shader& sh, int amount)
 {
     //Activate our shader.
-    glUseProgram(shaderID);
+    sh.Bind();
     
     //Bind Texture and VAO objects in order for OpenGL to use it. 
     tx.Bind(0);

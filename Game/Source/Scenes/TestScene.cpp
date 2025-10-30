@@ -6,7 +6,6 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtx/string_cast.hpp>
-#include <gtc/type_ptr.hpp>
 
 #include "Core/Application.h"
 
@@ -39,7 +38,7 @@ TestScene::TestScene()
     //Create shader using default vertex and fragment (currently hardcoded location)
     std::filesystem::path VertexPath("E:/GameDev/Personal/Other/Terra/Terra/Resources/Shaders/DefaultVertex.vert");
     std::filesystem::path FragmentPath("E:/GameDev/Personal/Other/Terra/Terra/Resources/Shaders/DefaultFragment.frag");
-    m_TestShader = Terra::Shader::CreateShader(VertexPath,FragmentPath);
+    m_Shader = new Terra::Shader(VertexPath,FragmentPath);
 
     //Bind Vertex Array so that the next couple items apply to this.
     m_VAO.Bind();
@@ -75,19 +74,15 @@ TestScene::TestScene()
     m_VAO.Unbind();
     m_VertexBuffer->Unbind();
     ib.Unbind();
-    
-    //Get shader texture uniform variable location (Tex 0 - 16).
-    GLint textureUniform = glGetUniformLocation(m_TestShader, "u_texture");
-    glUseProgram(m_TestShader);
-    glUniform1i(textureUniform, 0);
-    
-    m_MatrixUniformID = glGetUniformLocation(m_TestShader, "u_ProjectionViewMatrix");
+
+    m_Shader->Bind();
+    m_Shader->SetInt("u_Texture", 0);
 }
 
 TestScene::~TestScene()
 {
     //Cleanup all objects
-    glDeleteProgram(m_TestShader);
+    delete m_Shader;
 }
 
 void TestScene::Update(float DeltaTime)
@@ -132,7 +127,7 @@ static VertexData* CreateQuad(VertexData* target, float x, float y)
 
 void TestScene::Render()
 {
-    glUseProgram(m_TestShader);
+    m_Shader->Bind();
 
     int indexCount = 0;
     std::array<VertexData, VertexCount> Vertices;
@@ -156,9 +151,9 @@ void TestScene::Render()
     
     //Set vertex uniform values
     const glm::mat4 MVP = m_camera.GetProjectionViewMatrix();
-    glUniformMatrix4fv(m_MatrixUniformID, 1, GL_FALSE, glm::value_ptr(MVP));
-
-    Terra::Renderer::Draw(m_VAO,m_TestTexture,m_TestShader,indexCount);
+    m_Shader->SetMat4("u_ProjectionViewMatrix", MVP);
+    
+    Terra::Renderer::Draw(m_VAO,m_TestTexture,*m_Shader,indexCount);
     
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

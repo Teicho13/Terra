@@ -1,9 +1,43 @@
 #include "Shader.h"
 #include <fstream>
 #include <iostream>
+#include <glm.hpp>
+#include <gtc/type_ptr.inl>
 
 namespace Terra
 {
+    Shader::Shader(const std::filesystem::path& VertextPath, const std::filesystem::path& FragmentPath)
+        :m_ID(CreateShader(VertextPath, FragmentPath))
+    {
+    }
+
+    Shader::~Shader()
+    {
+        glDeleteProgram(m_ID);
+    }
+
+    void Shader::Bind()
+    {
+        glUseProgram(m_ID);
+    }
+
+    void Shader::Unbind()
+    {
+        glUseProgram(0);
+    }
+
+    void Shader::SetInt(const std::string& name, int value)
+    {
+        GLint location = glGetUniformLocation(m_ID, name.c_str());
+        glUniform1i(location, value);
+    }
+
+    void Shader::SetMat4(const std::string& name, const glm::mat4& matrix)
+    {
+        GLint location = glGetUniformLocation(m_ID, name.c_str());
+        glUniformMatrix4fv(location,1,GL_FALSE,glm::value_ptr(matrix));
+    }
+
     std::string Shader::ReadFile(const std::filesystem::path Path)
     {
         std::ifstream file(Path);
@@ -18,7 +52,6 @@ namespace Terra
         return contentStream.str();
     }
 
-    
     GLuint Shader::CreateShader(const std::filesystem::path& VertexPath, const std::filesystem::path& FragmentPath)
     {
         //Get source code from file and convert to characters.

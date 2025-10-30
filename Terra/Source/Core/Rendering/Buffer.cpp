@@ -2,11 +2,18 @@
 
 #include <glad/glad.h>
 
-Terra::VertexBuffer::VertexBuffer(const void* data, unsigned int size)
+Terra::VertexBuffer::VertexBuffer(const void* data, const unsigned int size)
 {
     glGenBuffers(1, &m_ID);
     glBindBuffer(GL_ARRAY_BUFFER, m_ID);
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+}
+
+Terra::VertexBuffer::VertexBuffer(const unsigned int size)
+{
+    glGenBuffers(1, &m_ID);
+    glBindBuffer(GL_ARRAY_BUFFER, m_ID);
+    glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 }
 
 Terra::VertexBuffer::~VertexBuffer()

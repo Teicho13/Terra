@@ -25,6 +25,7 @@ private:
     Terra::Camera m_camera;
     Terra::VertexArray m_VAO;
     Terra::Texture m_TestTexture;
+    Terra::VertexBuffer* m_VertexBuffer = nullptr;
     
     unsigned int m_TestShader;
     int m_MatrixUniformID;

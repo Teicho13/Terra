@@ -1,8 +1,11 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "TestScene.h"
 #include "Core/Rendering/Shader.h"
 #include <stb_image.h>
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
+#include <gtx/string_cast.hpp>
 #include <gtc/type_ptr.hpp>
 
 #include "Core/Application.h"
@@ -11,25 +14,24 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <iostream>
+#include <array>
 
 #include "Core/Rendering/Buffer.h"
 #include "Core/Rendering/Renderer.h"
 
-//Vertices coordinates square
-GLfloat vertices[] =
+
+//pre-calculations for amount of vertices and indices based on the quads
+constexpr size_t QuadCount = 1000;
+constexpr size_t VertexCount = QuadCount * 4;
+constexpr size_t IndexCount = QuadCount * 6;
+
+struct VertexData
 {
-    -50.0f, -50.0f, 0.f,      0.f, 0.f,
-    -50.0f,  50.0f, 0.f,      0.f, 1.f,
-     50.0f,  50.0f, 0.f,      1.f, 1.f,
-     50.0f, -50.0f, 0.0f,     1.f, 0.f
+    std::array<float, 3> Position;
+    std::array<float, 4> Color;
+    std::array<float, 2> Texcoord;
 };
 
-//Order in which the vertices will be drawn (optimization)
-GLuint Indices[] =
-{
-    0, 2, 1, 
-    0, 3, 2
-};
 
 TestScene::TestScene()
     : m_TestTexture(std::filesystem::path("E:/GameDev/Personal/Other/Terra/Terra/Resources/Textures/boomkin.jpg"))
@@ -43,26 +45,43 @@ TestScene::TestScene()
     m_VAO.Bind();
 
     //Bind vertex buffer and link it to the vertices.
-    Terra::VertexBuffer vb(vertices, sizeof(vertices));
-    
-    //Bind elements buffer and link it to the indeces.
-    Terra::IndexBuffer ib(Indices, 6);
+    m_VertexBuffer = new Terra::VertexBuffer(VertexCount * sizeof(VertexData));
     
     //Link VBO attributes (Coordinates & Texture coordinate)
-    m_VAO.AddAttribute(vb,{.count = 3, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = 5 * sizeof(float), .offset = (void*)0});
-    m_VAO.AddAttribute(vb,{.count = 2, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = 5 * sizeof(float), .offset = (void*)(3 * sizeof(float))});
+    m_VAO.AddAttribute(*m_VertexBuffer,{.count = 3, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(VertexData), .offset = (void*)offsetof(VertexData, Position)});
+    m_VAO.AddAttribute(*m_VertexBuffer,{.count = 4, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(VertexData), .offset = (void*)offsetof(VertexData, Color)});
+    m_VAO.AddAttribute(*m_VertexBuffer,{.count = 2, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(VertexData), .offset = (void*)offsetof(VertexData, Texcoord)});
+
+    //Generate indices based on the amount of quads we want.
+    uint32_t Indices[IndexCount];
+    uint32_t offset = 0;
+    for (size_t i = 0; i < IndexCount; i += 6)
+    {
+        Indices[i + 0] = 0 + offset;
+        Indices[i + 1] = 2 + offset;
+        Indices[i + 2] = 1 + offset;
+        
+        Indices[i + 3] = 0 + offset;
+        Indices[i + 4] = 3 + offset;
+        Indices[i + 5] = 2 + offset;
+
+        offset += 4;
+    }
+    
+    //Bind elements buffer and link it to the indeces.
+    Terra::IndexBuffer ib(Indices, IndexCount);
     
     //Unbind all objects (order matters)
     m_VAO.Unbind();
-    vb.Unbind();
+    m_VertexBuffer->Unbind();
     ib.Unbind();
     
     //Get shader texture uniform variable location (Tex 0 - 16).
-    GLint textureUniform = glGetUniformLocation(m_TestShader, "tex0");
+    GLint textureUniform = glGetUniformLocation(m_TestShader, "u_texture");
     glUseProgram(m_TestShader);
     glUniform1i(textureUniform, 0);
     
-    m_MatrixUniformID = glGetUniformLocation(m_TestShader, "projectionViewMatrix");
+    m_MatrixUniformID = glGetUniformLocation(m_TestShader, "u_ProjectionViewMatrix");
 }
 
 TestScene::~TestScene()
@@ -80,23 +99,67 @@ bool ButtonWasPressed = false;
 glm::vec3 ModelTranslationA(50.0f, 50.0f, 0.0f);
 glm::vec3 ModelTranslationB(150.0f, 150.0f, 0.0f);
 
+static VertexData* CreateQuad(VertexData* target, float x, float y)
+{
+    float size = 100;
+    
+    //Bottom left
+    target->Position = {x, y, 0.0f};
+    target->Color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    target->Texcoord = { 0.0f, 0.0f };
+    target++;
+
+    //Top Left
+    target->Position = {x, y + size, 0.0f};
+    target->Color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    target->Texcoord = { 0.0f, 1.0f };
+    target++;
+    
+    //Top Right
+    target->Position = {x + size, y + size, 0.0f};
+    target->Color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    target->Texcoord = { 1.0f, 1.0f };
+    target++;
+
+    //Bottom Right
+    target->Position = {x + size, y, 0.0f};
+    target->Color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    target->Texcoord = { 1.0f, 0.0f };
+    target++;
+
+    return target;
+}
+
 void TestScene::Render()
 {
     glUseProgram(m_TestShader);
+
+    int indexCount = 0;
+    std::array<VertexData, VertexCount> Vertices;
+    VertexData* buffer = Vertices.data();
+    
+    for (size_t y = 0; y < 8; y++)
+    {
+        for (size_t x = 0; x < 13; x++)
+        {
+            buffer = CreateQuad(buffer,x * 100,y * 100);
+            indexCount += 6;
+        }
+    }
+    
+    buffer = CreateQuad(buffer,ModelTranslationA.x, ModelTranslationA.y);
+    indexCount += 6;
+    
+    m_VAO.Bind();
+    m_VertexBuffer->Bind();
+    glBufferSubData(GL_ARRAY_BUFFER,0,Vertices.size() * sizeof(VertexData),Vertices.data());
     
     //Set vertex uniform values
-    const glm::mat4 ModelA = glm::translate(glm::mat4(1.f), ModelTranslationA);
-    const glm::mat4 MVPA = m_camera.GetProjectionViewMatrix() * ModelA;
-    glUniformMatrix4fv(m_MatrixUniformID, 1, GL_FALSE, glm::value_ptr(MVPA));
+    const glm::mat4 MVP = m_camera.GetProjectionViewMatrix();
+    glUniformMatrix4fv(m_MatrixUniformID, 1, GL_FALSE, glm::value_ptr(MVP));
 
-    Terra::Renderer::Draw(m_VAO,m_TestTexture,m_TestShader);
-
-    const glm::mat4 ModelB = glm::translate(glm::mat4(1.f), ModelTranslationB);
-    const glm::mat4 MVPB = m_camera.GetProjectionViewMatrix() * ModelB;
-    glUniformMatrix4fv(m_MatrixUniformID, 1, GL_FALSE, glm::value_ptr(MVPB));
-
-    Terra::Renderer::Draw(m_VAO,m_TestTexture,m_TestShader);
-
+    Terra::Renderer::Draw(m_VAO,m_TestTexture,m_TestShader,indexCount);
+    
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();

@@ -9,6 +9,7 @@ namespace Terra
     {
     public:
         static void Draw(VertexArray& va, const Texture& tx, unsigned int shaderID);
+        static void Draw(VertexArray& va, const Texture& tx, unsigned int shaderID, int amount);
         static void Clear();
     };   
 }

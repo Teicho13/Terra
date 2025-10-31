@@ -6,7 +6,7 @@ namespace Terra
     class Texture
     {
     public:
-        Texture(const std::filesystem::path& ImagePath);
+        Texture(const std::string& ImagePath);
         ~Texture();
         
         void Bind(unsigned int slot) const;

@@ -6,11 +6,11 @@
 
 namespace Terra
 {
-    Shader::Shader(const std::filesystem::path& VertextPath, const std::filesystem::path& FragmentPath)
+    Shader::Shader(const std::string& VertextPath, const std::string& FragmentPath)
         :m_ID(CreateShader(VertextPath, FragmentPath))
     {
     }
-
+    
     Shader::~Shader()
     {
         glDeleteProgram(m_ID);
@@ -38,7 +38,7 @@ namespace Terra
         glUniformMatrix4fv(location,1,GL_FALSE,glm::value_ptr(matrix));
     }
 
-    std::string Shader::ReadFile(const std::filesystem::path Path)
+    std::string Shader::ReadFile(const std::string& Path)
     {
         std::ifstream file(Path);
 
@@ -52,7 +52,7 @@ namespace Terra
         return contentStream.str();
     }
 
-    GLuint Shader::CreateShader(const std::filesystem::path& VertexPath, const std::filesystem::path& FragmentPath)
+    GLuint Shader::CreateShader(const std::string& VertexPath, const std::string& FragmentPath)
     {
         //Get source code from file and convert to characters.
         

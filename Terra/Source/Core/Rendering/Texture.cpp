@@ -3,12 +3,12 @@
 #include <stb_image.h>
 #include <glad/glad.h>
 
-Terra::Texture::Texture(const std::filesystem::path& ImagePath)
-    : m_ID(0), m_FilePath(ImagePath.string()), m_Width(0), m_Height(0), m_Channels(0)
+Terra::Texture::Texture(const std::string& ImagePath)
+    : m_ID(0), m_FilePath(ImagePath), m_Width(0), m_Height(0), m_Channels(0)
 {
     stbi_set_flip_vertically_on_load(1);
     
-    unsigned char* imageBytes = stbi_load(ImagePath.string().c_str(), &m_Width, &m_Height, &m_Channels, 4);
+    unsigned char* imageBytes = stbi_load(ImagePath.c_str(), &m_Width, &m_Height, &m_Channels, 4);
     
     //Create Texture object and bind ID
     glGenTextures(1,&m_ID);

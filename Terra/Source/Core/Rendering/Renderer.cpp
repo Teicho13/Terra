@@ -4,6 +4,7 @@
 
 #include "Camera.h"
 #include "VertexArray.h"
+#include "Core/FileIO.h"
 
 namespace Terra
 {
@@ -75,12 +76,7 @@ namespace Terra
         delete[] indices;
     
         //Create Shader
-    
-        //Create shader using default vertex and fragment (currently hardcoded location)
-        std::filesystem::path VertexPath("E:/GameDev/Personal/Other/Terra/Terra/Resources/Shaders/DefaultVertex.vert");
-        std::filesystem::path FragmentPath("E:/GameDev/Personal/Other/Terra/Terra/Resources/Shaders/DefaultFragment.frag");
-        
-        s_RendererData.QuadShader = std::make_unique<Shader>(VertexPath,FragmentPath);
+        s_RendererData.QuadShader = std::make_unique<Shader>(FileIO::GetEngineFile("Resources\\Shaders\\DefaultVertex.vert"),FileIO::GetEngineFile("Resources\\Shaders\\DefaultFragment.frag"));
 
         //Default size of the quad.
 

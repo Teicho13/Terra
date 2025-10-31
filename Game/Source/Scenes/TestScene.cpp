@@ -14,9 +14,8 @@
 #include <imgui_impl_opengl3.h>
 #include <iostream>
 #include <array>
-
-#include "Core/Rendering/Buffer.h"
 #include "Core/Rendering/Renderer.h"
+#include "Core/FileIO.h"
 
 
 //pre-calculations for amount of vertices and indices based on the quads
@@ -33,9 +32,8 @@ struct VertexData
 
 
 TestScene::TestScene()
-: m_TestTexture(std::filesystem::path("E:/GameDev/Personal/Other/Terra/Terra/Resources/Textures/boomkin.jpg"))
+: m_TestTexture(Terra::FileIO::GetEngineFile("Resources\\Textures\\boomkin.jpg"))
 {
-
 }
 
 TestScene::~TestScene()

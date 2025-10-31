@@ -33,127 +33,79 @@ struct VertexData
 
 
 TestScene::TestScene()
-    : m_TestTexture(std::filesystem::path("E:/GameDev/Personal/Other/Terra/Terra/Resources/Textures/boomkin.jpg"))
+: m_TestTexture(std::filesystem::path("E:/GameDev/Personal/Other/Terra/Terra/Resources/Textures/boomkin.jpg"))
 {
-    //Create shader using default vertex and fragment (currently hardcoded location)
-    std::filesystem::path VertexPath("E:/GameDev/Personal/Other/Terra/Terra/Resources/Shaders/DefaultVertex.vert");
-    std::filesystem::path FragmentPath("E:/GameDev/Personal/Other/Terra/Terra/Resources/Shaders/DefaultFragment.frag");
-    m_Shader = new Terra::Shader(VertexPath,FragmentPath);
 
-    //Bind Vertex Array so that the next couple items apply to this.
-    m_VAO.Bind();
-
-    //Bind vertex buffer and link it to the vertices.
-    m_VertexBuffer = new Terra::VertexBuffer(VertexCount * sizeof(VertexData));
-    
-    //Link VBO attributes (Coordinates & Texture coordinate)
-    m_VAO.AddAttribute(*m_VertexBuffer,{.count = 3, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(VertexData), .offset = (void*)offsetof(VertexData, Position)});
-    m_VAO.AddAttribute(*m_VertexBuffer,{.count = 4, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(VertexData), .offset = (void*)offsetof(VertexData, Color)});
-    m_VAO.AddAttribute(*m_VertexBuffer,{.count = 2, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(VertexData), .offset = (void*)offsetof(VertexData, Texcoord)});
-
-    //Generate indices based on the amount of quads we want.
-    uint32_t Indices[IndexCount];
-    uint32_t offset = 0;
-    for (size_t i = 0; i < IndexCount; i += 6)
-    {
-        Indices[i + 0] = 0 + offset;
-        Indices[i + 1] = 2 + offset;
-        Indices[i + 2] = 1 + offset;
-        
-        Indices[i + 3] = 0 + offset;
-        Indices[i + 4] = 3 + offset;
-        Indices[i + 5] = 2 + offset;
-
-        offset += 4;
-    }
-    
-    //Bind elements buffer and link it to the indeces.
-    Terra::IndexBuffer ib(Indices, IndexCount);
-    
-    //Unbind all objects (order matters)
-    m_VAO.Unbind();
-    m_VertexBuffer->Unbind();
-    ib.Unbind();
-
-    m_Shader->Bind();
-    m_Shader->SetInt("u_Texture", 0);
 }
 
 TestScene::~TestScene()
 {
     //Cleanup all objects
-    delete m_Shader;
 }
 
 void TestScene::Update(float DeltaTime)
 {
 }
 
+//Temp function
+glm::vec3 lerp(const glm::vec3& a, const glm::vec3& b, float t) {
+
+    return {
+        a.x + (b.x - a.x) * t,
+        a.y + (b.y - a.y) * t,
+        a.z + (b.z - a.z) * t
+    };
+}
+
 //Temp variables
 bool ButtonWasPressed = false;
-glm::vec3 ModelTranslationA(50.0f, 50.0f, 0.0f);
-glm::vec3 ModelTranslationB(150.0f, 150.0f, 0.0f);
-
-static VertexData* CreateQuad(VertexData* target, float x, float y)
-{
-    float size = 100;
-    
-    //Bottom left
-    target->Position = {x, y, 0.0f};
-    target->Color = { 1.0f, 1.0f, 1.0f, 1.0f };
-    target->Texcoord = { 0.0f, 0.0f };
-    target++;
-
-    //Top Left
-    target->Position = {x, y + size, 0.0f};
-    target->Color = { 1.0f, 1.0f, 1.0f, 1.0f };
-    target->Texcoord = { 0.0f, 1.0f };
-    target++;
-    
-    //Top Right
-    target->Position = {x + size, y + size, 0.0f};
-    target->Color = { 1.0f, 1.0f, 1.0f, 1.0f };
-    target->Texcoord = { 1.0f, 1.0f };
-    target++;
-
-    //Bottom Right
-    target->Position = {x + size, y, 0.0f};
-    target->Color = { 1.0f, 1.0f, 1.0f, 1.0f };
-    target->Texcoord = { 1.0f, 0.0f };
-    target++;
-
-    return target;
-}
+int GridSettings[2] = {2,2};
+int tileSpacing = 3;
 
 void TestScene::Render()
 {
-    m_Shader->Bind();
-
-    int indexCount = 0;
-    std::array<VertexData, VertexCount> Vertices;
-    VertexData* buffer = Vertices.data();
+    Terra::Renderer::RenderScene(m_camera);
     
-    for (size_t y = 0; y < 8; y++)
+    int tilesize = Terra::Renderer::s_TileSize;
+
+    glm::mat4 scale = glm::scale(glm::mat4(1.f), glm::vec3(tilesize,tilesize,1.f));
+
+    m_TestTexture.Bind(0);
+
+    //Temp create a grid for testing quads.
+    for (int y = 0; y < GridSettings[1]; y++)
     {
-        for (size_t x = 0; x < 13; x++)
+        for(int x = 0; x < GridSettings[0]; x++)
         {
-            buffer = CreateQuad(buffer,x * 100,y * 100);
-            indexCount += 6;
+            //Temp calculations for  gradiant grid colors
+            
+            float ty = static_cast<float>(y) / static_cast<float>(GridSettings[1] - 1);
+            float tx = static_cast<float>(x) / static_cast<float>(GridSettings[0] - 1);
+
+            float t = (tx + ty) / 2.f;
+            glm::vec3 color = lerp(glm::vec3(1.f,0.f,0.f),glm::vec3(0.f,0.f,1.f),t);
+
+            //TODO Replace all transformations with a single transform variable we get from an object.
+            glm::mat4 trans(1.f);
+            trans = glm::translate(glm::mat4(1.f), glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0));
+            glm::mat4 model = trans * scale;
+
+            //Alternate between texture and not
+            if ((y + x) % 2 == 0)
+            {
+                //Terra::Renderer::DrawQuad(model, glm::vec4(color, 1.0f));
+                Terra::Renderer::DrawQuad(glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0),glm::vec3(tilesize,tilesize,1.f), glm::vec4(color, 1.0f));
+            }else
+            {
+                Terra::Renderer::DrawQuad(model, m_TestTexture);
+            }
         }
     }
-    
-    buffer = CreateQuad(buffer,ModelTranslationA.x, ModelTranslationA.y);
-    indexCount += 6;
-    
-    m_VAO.Bind();
-    m_VertexBuffer->Bind();
-    glBufferSubData(GL_ARRAY_BUFFER,0,Vertices.size() * sizeof(VertexData),Vertices.data());
-    
-    //Set vertex uniform values
-    const glm::mat4 MVP = m_camera.GetProjectionViewMatrix();
-    m_Shader->SetMat4("u_ProjectionViewMatrix", MVP);
-    
-    Terra::Renderer::Draw(m_VAO,m_TestTexture,*m_Shader,indexCount);
+
+    //Draw all gathered indices.
+    Terra::Renderer::Flush();
+
+    m_TestTexture.Unbind();
     
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -164,8 +116,11 @@ void TestScene::Render()
     ImGui::Text("E is pressed: %s", ButtonWasPressed ? "true" : "false");
     ImGui::Text("Camera Position: X: %.2f Y: %.2f Z: %.2f", m_camera.GetPosition().x,m_camera.GetPosition().y,m_camera.GetPosition().z);
     ImGui::Text("Camera ZoomLevel: %.2f", m_camera.GetZoomLevel());
-    ImGui::SliderFloat3("Model A Translation", &ModelTranslationA.x , 0.f,1280.f);
-    ImGui::SliderFloat3("Model B Translation", &ModelTranslationB.x , 0.f,1280.f);
+    ImGui::SliderInt("Tile Size", &Terra::Renderer::s_TileSize , 1,100);
+    ImGui::SliderInt("Tile Spacing", &tileSpacing , 0,100);
+    ImGui::SliderInt2("Grid Settings", &GridSettings[0] , 0,200);
+    ImGui::Text("Quads: %d", Terra::Renderer::s_DrawnQuads);
+    ImGui::Text("Draw Calls: %d", Terra::Renderer::s_DrawCalls);
     ImGui::End();
 
     ImGui::Render();
@@ -196,13 +151,13 @@ void TestScene::OnInputPressed(int key, int scancode, int mods)
     if (key == GLFW_KEY_EQUAL)
     {
         float zoom = m_camera.GetZoomLevel();
-        m_camera.SetZoomLevel(zoom + 0.1f);
+        m_camera.SetZoomLevel(zoom - 0.1f);
     }
 
     if (key == GLFW_KEY_MINUS)
     {
         float zoom = m_camera.GetZoomLevel();
-        m_camera.SetZoomLevel(zoom - 0.1f);
+        m_camera.SetZoomLevel(zoom + 0.1f);
     }
 }
 

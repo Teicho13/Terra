@@ -28,7 +28,7 @@ namespace Terra
 
     void VertexArray::AddAttribute(const VertexBuffer& vertexBuffer, const VertexAttribute& vertexAttrbute)
     {
-        Bind();
+        glBindVertexArray(m_ID);
         vertexBuffer.Bind();
         unsigned int NextIndex = static_cast<unsigned int>(m_VertexAttributes.size());
         const auto& va = vertexAttrbute;

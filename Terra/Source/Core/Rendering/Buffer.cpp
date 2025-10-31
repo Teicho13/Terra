@@ -31,6 +31,12 @@ void Terra::VertexBuffer::Unbind() const
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+void Terra::VertexBuffer::SetData(unsigned int size, const void* data)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, m_ID);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+}
+
 //Index Buffer
 
 Terra::IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count)

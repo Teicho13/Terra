@@ -10,6 +10,8 @@ namespace Terra
         ~VertexBuffer();
         void Bind() const;
         void Unbind() const;
+
+        void SetData(unsigned int size, const void* data);
     private:
         unsigned int m_ID = 0;
     };

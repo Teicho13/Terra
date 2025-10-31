@@ -90,6 +90,8 @@ namespace Terra
         glfwSetKeyCallback(m_Window->GetWindow(), GLFWKeyCallback);
         glfwSetMouseButtonCallback(m_Window->GetWindow(), GLFWMouseButtonCallback);
 
+        Renderer::Initialize();
+
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -105,6 +107,7 @@ namespace Terra
         ImGui::DestroyContext();
 
         m_Scenes.clear();
+        Renderer::Shutdown();
         m_Window->Destroy();
         glfwTerminate();
     }

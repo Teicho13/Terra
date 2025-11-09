@@ -14,6 +14,8 @@ namespace Terra
 
         int GetWidth() const { return m_Width; }
         int GetHeight() const { return m_Height; }
+
+        unsigned int GetID() const { return m_ID; }
     private:
         unsigned int m_ID;
         std::string m_FilePath;

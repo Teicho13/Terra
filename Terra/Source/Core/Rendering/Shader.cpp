@@ -32,6 +32,11 @@ namespace Terra
         glUniform1i(location, value);
     }
 
+    void Shader::SetInt(GLint location, int value)
+    {
+        glUniform1i(location, value);
+    }
+
     void Shader::SetMat4(const std::string& name, const glm::mat4& matrix)
     {
         GLint location = glGetUniformLocation(m_ID, name.c_str());
@@ -50,6 +55,11 @@ namespace Terra
         std::ostringstream contentStream;
         contentStream << file.rdbuf();
         return contentStream.str();
+    }
+
+    GLint Shader::GetUniformLocation(const std::string& name) const
+    {
+        return glGetUniformLocation(m_ID, name.c_str());
     }
 
     GLuint Shader::CreateShader(const std::string& VertexPath, const std::string& FragmentPath)

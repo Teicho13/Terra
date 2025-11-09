@@ -18,5 +18,6 @@ public:
 
 private:
     Terra::Camera m_camera;
-    Terra::Texture m_TestTexture;
+    std::shared_ptr<Terra::Texture> m_TestTexture;
+    std::shared_ptr<Terra::Texture> m_TestTexture2;
 };

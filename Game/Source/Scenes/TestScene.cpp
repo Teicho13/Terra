@@ -32,8 +32,11 @@ struct VertexData
 
 
 TestScene::TestScene()
-: m_TestTexture(Terra::FileIO::GetEngineFile("Resources\\Textures\\boomkin.jpg"))
 {
+    //Example textures
+    
+    m_TestTexture = std::make_shared<Terra::Texture>(Terra::FileIO::GetEngineFile("Resources\\Textures\\boomkin.jpg"));
+    m_TestTexture2 = std::make_shared<Terra::Texture>(Terra::FileIO::GetEngineFile("Resources\\Textures\\T_Icon.png"));
 }
 
 TestScene::~TestScene()
@@ -67,9 +70,7 @@ void TestScene::Render()
     int tilesize = Terra::Renderer::s_TileSize;
 
     glm::mat4 scale = glm::scale(glm::mat4(1.f), glm::vec3(tilesize,tilesize,1.f));
-
-    m_TestTexture.Bind(0);
-
+    
     //Temp create a grid for testing quads.
     for (int y = 0; y < GridSettings[1]; y++)
     {
@@ -91,8 +92,8 @@ void TestScene::Render()
             //Alternate between texture and not
             if ((y + x) % 2 == 0)
             {
-                //Terra::Renderer::DrawQuad(model, glm::vec4(color, 1.0f));
-                Terra::Renderer::DrawQuad(glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0),glm::vec3(tilesize,tilesize,1.f), glm::vec4(color, 1.0f));
+                //Terra::Renderer::DrawQuad(glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0),glm::vec3(tilesize,tilesize,1.f), glm::vec4(color, 1.0f));
+                Terra::Renderer::DrawQuad(model, m_TestTexture2);
             }else
             {
                 Terra::Renderer::DrawQuad(model, m_TestTexture);
@@ -102,8 +103,6 @@ void TestScene::Render()
 
     //Draw all gathered indices.
     Terra::Renderer::Flush();
-
-    m_TestTexture.Unbind();
     
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

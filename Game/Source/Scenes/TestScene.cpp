@@ -18,25 +18,18 @@
 #include "Core/FileIO.h"
 
 
-//pre-calculations for amount of vertices and indices based on the quads
-constexpr size_t QuadCount = 1000;
-constexpr size_t VertexCount = QuadCount * 4;
-constexpr size_t IndexCount = QuadCount * 6;
-
-struct VertexData
-{
-    std::array<float, 3> Position;
-    std::array<float, 4> Color;
-    std::array<float, 2> Texcoord;
-};
-
-
 TestScene::TestScene()
 {
     //Example textures
     
     m_TestTexture = std::make_shared<Terra::Texture>(Terra::FileIO::GetEngineFile("Resources\\Textures\\boomkin.jpg"));
     m_TestTexture2 = std::make_shared<Terra::Texture>(Terra::FileIO::GetEngineFile("Resources\\Textures\\T_Icon.png"));
+    m_TestSpriteSheet = std::make_shared<Terra::Texture>(Terra::FileIO::GetEngineFile("Resources\\Textures\\ExampleSpriteSheet.png"));
+
+    m_AnimationTest.Initialize(3);
+    m_AnimationTest.SetLooped(true);
+    m_AnimationTest.SetFrameSpeed(5.f);
+    m_AnimationTest.Play();
 }
 
 TestScene::~TestScene()
@@ -46,6 +39,9 @@ TestScene::~TestScene()
 
 void TestScene::Update(float DeltaTime)
 {
+    m_AnimationTest.Update(DeltaTime);
+
+    std::cout << m_AnimationTest.CurrentFrame() << std::endl;
 }
 
 //Temp function
@@ -66,6 +62,10 @@ int tileSpacing = 3;
 void TestScene::Render()
 {
     Terra::Renderer::RenderScene(m_camera);
+
+    float offset = 1.0f / static_cast<float>(m_AnimationTest.MaxFrames());
+    
+    glm::vec2 textureCoords[] = { { (float)m_AnimationTest.CurrentFrame() * offset, 0.0f }, { (float)m_AnimationTest.CurrentFrame() * offset, 1.0f }, { ((float)m_AnimationTest.CurrentFrame() * offset) + offset, 1.0f }, { ((float)m_AnimationTest.CurrentFrame() * offset) + offset, 0.0f } };
     
     int tilesize = Terra::Renderer::s_TileSize;
 
@@ -76,19 +76,21 @@ void TestScene::Render()
     {
         for(int x = 0; x < GridSettings[0]; x++)
         {
-            //Temp calculations for  gradiant grid colors
+            //TODO Replace all transformations with a single transform variable we get from an object.
+            glm::mat4 trans(1.f);
+            trans = glm::translate(glm::mat4(1.f), glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0));
+            glm::mat4 model = trans * scale;
+
+            Terra::Renderer::DrawQuad(model, m_TestSpriteSheet,textureCoords);
+
+            /*//Temp calculations for  gradiant grid colors
             
             float ty = static_cast<float>(y) / static_cast<float>(GridSettings[1] - 1);
             float tx = static_cast<float>(x) / static_cast<float>(GridSettings[0] - 1);
 
             float t = (tx + ty) / 2.f;
             glm::vec3 color = lerp(glm::vec3(1.f,0.f,0.f),glm::vec3(0.f,0.f,1.f),t);
-
-            //TODO Replace all transformations with a single transform variable we get from an object.
-            glm::mat4 trans(1.f);
-            trans = glm::translate(glm::mat4(1.f), glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0));
-            glm::mat4 model = trans * scale;
-
+            
             //Alternate between texture and not
             if ((y + x) % 2 == 0)
             {
@@ -97,7 +99,7 @@ void TestScene::Render()
             }else
             {
                 Terra::Renderer::DrawQuad(model, m_TestTexture);
-            }
+            }*/
         }
     }
 

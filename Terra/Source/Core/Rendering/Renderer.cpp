@@ -167,8 +167,61 @@ namespace Terra
     {
         //We now the quad vertices and texture coords ahead of time.
         constexpr size_t quadVertexCount = 4;
-        constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
+        constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 0.33f, 1.0f }, { 0.33f, 0.0f } };
 
+        //Check if we need to flush the already added quads before adding the new one
+        if (s_RendererData.QuadIndexCount >= s_RendererData.MaxIndices)
+        {
+            FlushBatch();
+        }
+
+        float textureIndex = -1.0f;
+        //Loop over our previously set texture slots to see if we already have the texture, if so set the index.
+
+        for (unsigned int i = 0; i < s_RendererData.CurrentTextureSlots; i++)
+        {
+            if (s_RendererData.TexturesSlots[i]->GetID() == texture->GetID())
+            {
+                textureIndex = static_cast<float>(i);
+                break;
+            }
+        }
+        
+
+        if (textureIndex == -1.0f)
+        {
+            //If we reached the max amount of textures per draw call flush early.
+            if (s_RendererData.CurrentTextureSlots >= s_RendererData.MaxTextureSlots)
+            {
+                FlushBatch();
+            }
+
+            textureIndex = static_cast<float>(s_RendererData.CurrentTextureSlots);
+            s_RendererData.TexturesSlots[s_RendererData.CurrentTextureSlots] = texture;
+            s_RendererData.CurrentTextureSlots++;
+        }
+
+        //Set data for each vertex
+        for (size_t i = 0; i < quadVertexCount; i++)
+        {
+            s_RendererData.QuadVertexDataAdressCopy->Position = transform * s_RendererData.QuadVertexPositions[i];
+            s_RendererData.QuadVertexDataAdressCopy->Color = glm::vec4(1.f);
+            s_RendererData.QuadVertexDataAdressCopy->Texcoord = textureCoords[i];
+            s_RendererData.QuadVertexDataAdressCopy->TextureID = textureIndex;
+            s_RendererData.QuadVertexDataAdressCopy->ShouldUseTexture = 1.f;
+            s_RendererData.QuadVertexDataAdressCopy++;
+        }
+    
+        s_RendererData.QuadIndexCount += 6;
+        s_DrawnQuads++;
+    }
+
+    void Renderer::DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture>& texture,
+        glm::vec2 textureCoords[4])
+    {
+        //We now the quad vertices and texture coords ahead of time.
+        constexpr size_t quadVertexCount = 4;
+        
         //Check if we need to flush the already added quads before adding the new one
         if (s_RendererData.QuadIndexCount >= s_RendererData.MaxIndices)
         {
@@ -228,6 +281,13 @@ namespace Terra
         DrawQuad(transform, texture);
     }
 
+    void Renderer::DrawQuad(const glm::vec3& position, const glm::vec3& size, const std::shared_ptr<Texture>& texture,
+        glm::vec2 textureCoords[4])
+    {
+        const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+        DrawQuad(transform, texture, textureCoords);
+    }
+    
     void Renderer::Flush()
     {
         //Check if there are indices to draw

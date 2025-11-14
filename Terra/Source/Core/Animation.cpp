@@ -1,8 +1,8 @@
 #include "Animation.h"
-
+#include <glm.hpp>
 namespace Terra
 {
-    //1 will be subtracted from the maxFrames to account for frame 0
+    //1 will be subtracted from the maxFrames to account for frame 0. eg: 3 = 0,1,2
     void Animation::Initialize(int maxFrames)
     {
         maxFrames = maxFrames - 1;
@@ -14,6 +14,9 @@ namespace Terra
         {
             m_MaxFrames = maxFrames;
         }
+
+        m_Offset = 1.f / static_cast<float>(m_MaxFrames + 1);
+        UpdateTextureCoordinates();
     }
 
     void Animation::Update(float deltaTime)
@@ -39,12 +42,27 @@ namespace Terra
                         Stop();
                     }
                 }
+
+                UpdateTextureCoordinates();
             }
         }
     }
 
     void Animation::SetLooped(const bool newValue) { m_LoopAnimation = newValue;}
     void Animation::SetFrameSpeed(const float newSpeed) { m_FrameSpeed = newSpeed; }
+
+    void Animation::UpdateTextureCoordinates()
+    {
+        m_TextureCoords[0] = { (static_cast<float>(m_CurrentFrame) * m_Offset), 0.0f };
+        m_TextureCoords[1] = { (static_cast<float>(m_CurrentFrame) * m_Offset), 1.0f };
+        m_TextureCoords[2] = { (static_cast<float>(m_CurrentFrame) * m_Offset) + m_Offset, 1.0f };
+        m_TextureCoords[3] = { (static_cast<float>(m_CurrentFrame) * m_Offset) + m_Offset, 0.0f };
+    }
+
+    std::array<glm::vec2, 4> Animation::GetTextureCoordinates() const
+    {
+        return m_TextureCoords;
+    }
 
     void Animation::Play() { m_IsPlaying = true; }
     void Animation::Stop() { m_IsPlaying = false; }

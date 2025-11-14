@@ -1,6 +1,8 @@
 #pragma once
+#include "AnimatedSprite.h"
 #include "Core/Animation.h"
 #include "Core/Scene.h"
+#include "Core/Sprite.h"
 #include "Core/Rendering/Camera.h"
 #include "Core/Rendering/Texture.h"
 
@@ -19,9 +21,6 @@ public:
 
 private:
     Terra::Camera m_camera;
-    std::shared_ptr<Terra::Texture> m_TestTexture;
-    std::shared_ptr<Terra::Texture> m_TestTexture2;
-    std::shared_ptr<Terra::Texture> m_TestSpriteSheet;
-
-    Terra::Animation m_AnimationTest;
+    Terra::Sprite m_SpriteTest;
+    Terra::AnimatedSprite m_AnimatedSpriteTest;
 };

@@ -167,7 +167,7 @@ namespace Terra
     {
         //We now the quad vertices and texture coords ahead of time.
         constexpr size_t quadVertexCount = 4;
-        constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 0.33f, 1.0f }, { 0.33f, 0.0f } };
+        constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
 
         //Check if we need to flush the already added quads before adding the new one
         if (s_RendererData.QuadIndexCount >= s_RendererData.MaxIndices)

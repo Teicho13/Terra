@@ -1,4 +1,7 @@
 #pragma once
+#include <array>
+#include <vec2.hpp>
+
 
 namespace Terra
 {
@@ -9,7 +12,7 @@ namespace Terra
         void Update(float deltaTime);
         void SetLooped(bool newValue);
         void SetFrameSpeed(float newSpeed);
-
+        
         void Play();
         void Stop();
         void Reset();
@@ -18,6 +21,10 @@ namespace Terra
         bool IsLooped() const;
         int CurrentFrame() const;
         int MaxFrames() const;
+
+        void UpdateTextureCoordinates();
+        std::array<glm::vec2,4> GetTextureCoordinates() const;
+        
         
     private:
         bool m_IsPlaying = false;
@@ -28,6 +35,9 @@ namespace Terra
         int m_CurrentFrame = 0;
 
         float m_Time = 0.0f;
+        
+        float m_Offset = 0.0f;
+        std::array<glm::vec2,4> m_TextureCoords = {};
     }; 
 }
 

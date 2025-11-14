@@ -19,17 +19,12 @@
 
 
 TestScene::TestScene()
+    :   m_SpriteTest(Terra::FileIO::GetEngineFile("Resources\\Textures\\boomkin.jpg")),
+        m_AnimatedSpriteTest(Terra::FileIO::GetEngineFile("Resources\\Textures\\ExampleSpriteSheet.png"),3)
 {
-    //Example textures
-    
-    m_TestTexture = std::make_shared<Terra::Texture>(Terra::FileIO::GetEngineFile("Resources\\Textures\\boomkin.jpg"));
-    m_TestTexture2 = std::make_shared<Terra::Texture>(Terra::FileIO::GetEngineFile("Resources\\Textures\\T_Icon.png"));
-    m_TestSpriteSheet = std::make_shared<Terra::Texture>(Terra::FileIO::GetEngineFile("Resources\\Textures\\ExampleSpriteSheet.png"));
-
-    m_AnimationTest.Initialize(3);
-    m_AnimationTest.SetLooped(true);
-    m_AnimationTest.SetFrameSpeed(5.f);
-    m_AnimationTest.Play();
+    m_AnimatedSpriteTest.GetAnimation().SetLooped(true);
+    m_AnimatedSpriteTest.GetAnimation().SetFrameSpeed(5.f);
+    m_AnimatedSpriteTest.GetAnimation().Play();
 }
 
 TestScene::~TestScene()
@@ -39,9 +34,11 @@ TestScene::~TestScene()
 
 void TestScene::Update(float DeltaTime)
 {
-    m_AnimationTest.Update(DeltaTime);
+    m_AnimatedSpriteTest.Update(DeltaTime);
 
-    std::cout << m_AnimationTest.CurrentFrame() << std::endl;
+    int tilesize = Terra::Renderer::s_TileSize;
+    m_SpriteTest.SetScale(glm::vec3(tilesize,tilesize,1.f));
+    m_AnimatedSpriteTest.SetScale(glm::vec3(tilesize,tilesize,1.f));
 }
 
 //Temp function
@@ -62,44 +59,38 @@ int tileSpacing = 3;
 void TestScene::Render()
 {
     Terra::Renderer::RenderScene(m_camera);
-
-    float offset = 1.0f / static_cast<float>(m_AnimationTest.MaxFrames());
-    
-    glm::vec2 textureCoords[] = { { (float)m_AnimationTest.CurrentFrame() * offset, 0.0f }, { (float)m_AnimationTest.CurrentFrame() * offset, 1.0f }, { ((float)m_AnimationTest.CurrentFrame() * offset) + offset, 1.0f }, { ((float)m_AnimationTest.CurrentFrame() * offset) + offset, 0.0f } };
-    
-    int tilesize = Terra::Renderer::s_TileSize;
-
-    glm::mat4 scale = glm::scale(glm::mat4(1.f), glm::vec3(tilesize,tilesize,1.f));
     
     //Temp create a grid for testing quads.
     for (int y = 0; y < GridSettings[1]; y++)
     {
         for(int x = 0; x < GridSettings[0]; x++)
         {
-            //TODO Replace all transformations with a single transform variable we get from an object.
-            glm::mat4 trans(1.f);
-            trans = glm::translate(glm::mat4(1.f), glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0));
-            glm::mat4 model = trans * scale;
-
-            Terra::Renderer::DrawQuad(model, m_TestSpriteSheet,textureCoords);
-
-            /*//Temp calculations for  gradiant grid colors
+            //Temp calculations for  gradiant grid colors
             
             float ty = static_cast<float>(y) / static_cast<float>(GridSettings[1] - 1);
             float tx = static_cast<float>(x) / static_cast<float>(GridSettings[0] - 1);
 
             float t = (tx + ty) / 2.f;
             glm::vec3 color = lerp(glm::vec3(1.f,0.f,0.f),glm::vec3(0.f,0.f,1.f),t);
+
+            int pattern = (x + y) % 3;
+            int tilesize = Terra::Renderer::s_TileSize;
             
-            //Alternate between texture and not
-            if ((y + x) % 2 == 0)
+            //Alternate between plain color Sprite and AnimatedSprite
+            if (pattern == 0)
             {
-                //Terra::Renderer::DrawQuad(glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0),glm::vec3(tilesize,tilesize,1.f), glm::vec4(color, 1.0f));
-                Terra::Renderer::DrawQuad(model, m_TestTexture2);
-            }else
+                Terra::Renderer::DrawQuad(glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0),glm::vec3(tilesize,tilesize,1.f), glm::vec4(color, 1.0f));
+            }
+            else if (pattern == 1)
             {
-                Terra::Renderer::DrawQuad(model, m_TestTexture);
-            }*/
+                m_AnimatedSpriteTest.SetPosition(glm::vec3(glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0.f)));
+                m_AnimatedSpriteTest.Draw();
+            }
+            else
+            {
+                m_SpriteTest.SetPosition(glm::vec3(glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0.f)));
+                m_SpriteTest.Draw();
+            }
         }
     }
 

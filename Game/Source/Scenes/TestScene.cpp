@@ -13,7 +13,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <iostream>
-#include <array>
+
 #include "Core/Rendering/Renderer.h"
 #include "Core/FileIO.h"
 

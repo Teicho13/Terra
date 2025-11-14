@@ -3,13 +3,14 @@
 #include <ext/matrix_transform.hpp>
 
 #include "Application.h"
+#include "ResourceManager.h"
 #include "Rendering/Renderer.h"
 #include "Rendering/Texture.h"
 
 namespace Terra
 {
     Sprite::Sprite(const std::string& texturePath)
-        : m_Texture(std::make_shared<Texture>(texturePath)), m_Transform(glm::mat4(1.f))
+        : m_Texture(ResourceManager::GetInstance().GetTexture(texturePath)), m_Transform(glm::mat4(1.f))
     {}
 
     Sprite::~Sprite()

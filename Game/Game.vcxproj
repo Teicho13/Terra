@@ -102,8 +102,8 @@
       <AdditionalDependencies>Terra.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(OutDir)Assets\$(ProjectName)"
+xcopy /E /D /Y "$(ProjectDir)Assets" "$(OutDir)Assets\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -124,8 +124,8 @@
       <AdditionalDependencies>Terra.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(OutDir)Assets\$(ProjectName)"
+xcopy /E /D /Y "$(ProjectDir)Assets" "$(OutDir)Assets\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -144,8 +144,8 @@
       <AdditionalDependencies>Terra.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(OutDir)Assets\$(ProjectName)"
+xcopy /E /D /Y "$(ProjectDir)Assets" "$(OutDir)Assets\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -166,8 +166,8 @@
       <AdditionalDependencies>Terra.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(OutDir)Assets\$(ProjectName)"
+xcopy /E /D /Y "$(ProjectDir)Assets" "$(OutDir)Assets\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

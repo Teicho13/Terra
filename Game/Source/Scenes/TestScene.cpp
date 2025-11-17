@@ -19,8 +19,8 @@
 
 
 TestScene::TestScene()
-    :   m_SpriteTest(Terra::FileIO::GetEngineFile("Resources\\Textures\\boomkin.jpg")),
-        m_AnimatedSpriteTest(Terra::FileIO::GetEngineFile("Resources\\Textures\\ExampleSpriteSheet.png"),3)
+    :   m_SpriteTest(Terra::FileIO::GetEngineFile("Textures\\boomkin.jpg")),
+        m_AnimatedSpriteTest(Terra::FileIO::GetEngineFile("Textures\\ExampleSpriteSheet.png"),3)
 {
     m_AnimatedSpriteTest.GetAnimation().SetLooped(true);
     m_AnimatedSpriteTest.GetAnimation().SetFrameSpeed(5.f);

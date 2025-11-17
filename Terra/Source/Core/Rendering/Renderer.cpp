@@ -86,7 +86,7 @@ namespace Terra
         delete[] indices;
     
         //Create Shader
-        s_RendererData.QuadShader = std::make_unique<Shader>(FileIO::GetEngineFile("Resources\\Shaders\\DefaultVertex.vert"),FileIO::GetEngineFile("Resources\\Shaders\\DefaultFragment.frag"));
+        s_RendererData.QuadShader = std::make_unique<Shader>(FileIO::GetEngineFile("Shaders\\DefaultVertex.vert"),FileIO::GetEngineFile("Shaders\\DefaultFragment.frag"));
 
         //Default size of the quad.
 

@@ -104,8 +104,8 @@
       <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"
+xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,8 +128,8 @@
       <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"
+xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -150,8 +150,8 @@
       <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"
+xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -174,8 +174,8 @@
       <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"
+xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

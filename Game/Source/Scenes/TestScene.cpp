@@ -19,12 +19,16 @@
 
 
 TestScene::TestScene()
-    :   m_SpriteTest(Terra::FileIO::GetEngineFile("Textures\\boomkin.jpg")),
-        m_AnimatedSpriteTest(Terra::FileIO::GetEngineFile("Textures\\ExampleSpriteSheet.png"),3)
+    : m_AnimatedSpriteTest(Terra::FileIO::GetEngineFile("Textures\\ExampleSpriteSheet.png"),3)
 {
     m_AnimatedSpriteTest.GetAnimation().SetLooped(true);
     m_AnimatedSpriteTest.GetAnimation().SetFrameSpeed(5.f);
     m_AnimatedSpriteTest.GetAnimation().Play();
+    m_AnimatedSpriteTest.SetPosition({300.f,200.f,1.f});
+
+    m_TestMap.SetMapData(Terra::FileIO::GetGameFile("Tilemaps\\Data\\FirstMap.csv"));
+    m_TestMap.SetMapTexture(Terra::FileIO::GetGameFile("Tilemaps\\GeneralTiles.png"));
+    
 }
 
 TestScene::~TestScene()
@@ -35,10 +39,7 @@ TestScene::~TestScene()
 void TestScene::Update(float DeltaTime)
 {
     m_AnimatedSpriteTest.Update(DeltaTime);
-
-    int tilesize = Terra::Renderer::s_TileSize;
-    m_SpriteTest.SetScale(glm::vec3(tilesize,tilesize,1.f));
-    m_AnimatedSpriteTest.SetScale(glm::vec3(tilesize,tilesize,1.f));
+    m_AnimatedSpriteTest.SetScale(glm::vec3(32.f,32.f,1.f));
 }
 
 //Temp function
@@ -53,46 +54,13 @@ glm::vec3 lerp(const glm::vec3& a, const glm::vec3& b, float t) {
 
 //Temp variables
 bool ButtonWasPressed = false;
-int GridSettings[2] = {2,2};
-int tileSpacing = 3;
 
 void TestScene::Render()
 {
     Terra::Renderer::RenderScene(m_camera);
     
-    //Temp create a grid for testing quads.
-    for (int y = 0; y < GridSettings[1]; y++)
-    {
-        for(int x = 0; x < GridSettings[0]; x++)
-        {
-            //Temp calculations for  gradiant grid colors
-            
-            float ty = static_cast<float>(y) / static_cast<float>(GridSettings[1] - 1);
-            float tx = static_cast<float>(x) / static_cast<float>(GridSettings[0] - 1);
-
-            float t = (tx + ty) / 2.f;
-            glm::vec3 color = lerp(glm::vec3(1.f,0.f,0.f),glm::vec3(0.f,0.f,1.f),t);
-
-            int pattern = (x + y) % 3;
-            int tilesize = Terra::Renderer::s_TileSize;
-            
-            //Alternate between plain color Sprite and AnimatedSprite
-            if (pattern == 0)
-            {
-                Terra::Renderer::DrawQuad(glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0),glm::vec3(tilesize,tilesize,1.f), glm::vec4(color, 1.0f));
-            }
-            else if (pattern == 1)
-            {
-                m_AnimatedSpriteTest.SetPosition(glm::vec3(glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0.f)));
-                m_AnimatedSpriteTest.Draw();
-            }
-            else
-            {
-                m_SpriteTest.SetPosition(glm::vec3(glm::vec3(x * (tilesize + tileSpacing) , y * (tilesize + tileSpacing) , 0.f)));
-                m_SpriteTest.Draw();
-            }
-        }
-    }
+    m_TestMap.DrawMap();
+    m_AnimatedSpriteTest.Draw();
 
     //Draw all gathered indices.
     Terra::Renderer::Flush();
@@ -106,11 +74,9 @@ void TestScene::Render()
     ImGui::Text("E is pressed: %s", ButtonWasPressed ? "true" : "false");
     ImGui::Text("Camera Position: X: %.2f Y: %.2f Z: %.2f", m_camera.GetPosition().x,m_camera.GetPosition().y,m_camera.GetPosition().z);
     ImGui::Text("Camera ZoomLevel: %.2f", m_camera.GetZoomLevel());
-    ImGui::SliderInt("Tile Size", &Terra::Renderer::s_TileSize , 1,100);
-    ImGui::SliderInt("Tile Spacing", &tileSpacing , 0,100);
-    ImGui::SliderInt2("Grid Settings", &GridSettings[0] , 0,200);
-    ImGui::Text("Quads: %d", Terra::Renderer::s_DrawnQuads);
-    ImGui::Text("Draw Calls: %d", Terra::Renderer::s_DrawCalls);
+    ImGui::Text("Quads: %d", Terra::RenderStats::s_DrawnQuads);
+    ImGui::Text("Textures used: %d", Terra::RenderStats::s_DrawnTextures);
+    ImGui::Text("Draw Calls: %d", Terra::RenderStats::s_DrawCalls);
     ImGui::End();
 
     ImGui::Render();

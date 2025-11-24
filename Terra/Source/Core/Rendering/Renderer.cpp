@@ -114,8 +114,7 @@ namespace Terra
         s_RendererData.QuadVertexDataAdressCopy = s_RendererData.QuadVertexDataAdress;
         s_RendererData.CurrentTextureSlots = 0;
         
-        s_DrawnQuads = 0;
-        s_DrawCalls = 0;
+        RenderStats::ResetData();
     }
 
     void Renderer::FlushBatch()
@@ -132,7 +131,7 @@ namespace Terra
     {
         //Clear screen
         glClearColor(0.f, 0.1f, 0.2f, 255.f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     
     void Renderer::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
@@ -160,7 +159,7 @@ namespace Terra
         }
     
         s_RendererData.QuadIndexCount += 6;
-        s_DrawnQuads++;
+        RenderStats::s_DrawnQuads++;
     }
     
     void Renderer::DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture>& texture)
@@ -213,7 +212,7 @@ namespace Terra
         }
     
         s_RendererData.QuadIndexCount += 6;
-        s_DrawnQuads++;
+        RenderStats::s_DrawnQuads++;
     }
 
     void Renderer::DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture>& texture,
@@ -266,7 +265,7 @@ namespace Terra
         }
     
         s_RendererData.QuadIndexCount += 6;
-        s_DrawnQuads++;
+        RenderStats::s_DrawnQuads++;
     }
 
     void Renderer::DrawQuad(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color)
@@ -304,10 +303,11 @@ namespace Terra
             {
                 s_RendererData.QuadShader->SetInt(textureArrayLocation + i, i);
                 s_RendererData.TexturesSlots[i]->Bind(i);
+                RenderStats::s_DrawnTextures++;
             }
             
             DrawIndices(*s_RendererData.VertexArray,static_cast<GLint>(s_RendererData.QuadIndexCount));
-            s_DrawCalls++;
+            RenderStats::s_DrawCalls++;
         }
     }
 

@@ -6,6 +6,16 @@
 
 namespace Terra
 {
+
+    struct RenderStats
+    {
+        static void ResetData() { s_DrawnQuads = 0; s_DrawCalls = 0; s_DrawnTextures = 0;}
+        
+        inline static unsigned int s_DrawnQuads = 0;
+        inline static int s_DrawCalls = 0;
+        inline static int s_DrawnTextures = 0;
+    };
+    
     class Camera;
     class Renderer
     {
@@ -26,11 +36,6 @@ namespace Terra
         static void FlushBatch();
         static void Flush();
         static void Clear();
-        
-        inline static int s_TileSize = 10;
-        inline static unsigned int s_DrawnQuads = 0;
-        inline static int s_DrawCalls = 0;
-
     private:
         static void DrawIndices(VertexArray& va, GLsizei count);
     };   

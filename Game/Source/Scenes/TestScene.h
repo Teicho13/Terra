@@ -1,16 +1,15 @@
 #pragma once
 #include "AnimatedSprite.h"
-#include "Core/Animation.h"
+#include "../Map/Map.h"
 #include "Core/Scene.h"
-#include "Core/Sprite.h"
 #include "Core/Rendering/Camera.h"
-#include "Core/Rendering/Texture.h"
+
 
 class TestScene : public Terra::Scene
 {
 public:
     TestScene();
-    virtual ~TestScene();
+    ~TestScene() override;
     
     void Update(float DeltaTime) override;
     void Render() override;
@@ -21,6 +20,6 @@ public:
 
 private:
     Terra::Camera m_camera;
-    Terra::Sprite m_SpriteTest;
     Terra::AnimatedSprite m_AnimatedSpriteTest;
+    Map m_TestMap;
 };

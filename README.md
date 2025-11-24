@@ -8,3 +8,5 @@ A custom framework and application to learn about the basics of graphics program
 * STB (Image)
 ## :movie_camera: Showcase
 ![Terra Example Showcase video](https://www.tychocharko.com/projects/Personal/Terra/images/TerraShowcase.gif)
+
+![Terra Map Showcase](https://www.tychocharko.com/projects/Personal/Terra/images/TerraMapShowcase.webp)

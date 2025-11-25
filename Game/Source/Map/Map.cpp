@@ -3,8 +3,11 @@
 #include <sstream>
 #include <vec2.hpp>
 #include <vec3.hpp>
+
+#include "Core/Application.h"
 #include "Core/ResourceManager.h"
 #include "Core/Rendering/Renderer.h"
+#include "Core/Rendering/Camera.h"
 
 void Map::SetMapData(const std::string& mapDataPath)
 {
@@ -71,6 +74,11 @@ void Map::SetMapTexture(const std::string& mapTexturePath)
     m_Texture = Terra::ResourceManager::GetInstance().GetTexture(mapTexturePath);
 }
 
+void Map::SetCamera(Terra::Camera* camera)
+{
+    m_CameraRef = camera;
+}
+
 void Map::DrawMap() const
 {
     for (int y = 0; y < m_MapRows; y++)
@@ -80,14 +88,29 @@ void Map::DrawMap() const
         
         for (int x = 0; x < m_MapColumns; x++)
         {
-            Terra::Renderer::DrawQuad(
-                glm::vec3(static_cast<float>(x * m_MapTileSize),static_cast<float>(flippedY * m_MapTileSize),1.f),
-                glm::vec3(static_cast<float>(m_MapTileSize)),
-                m_Texture,
-                GetTextureCoordinates(m_MapData[y][x]).data()
-                );
+            const float posX = static_cast<float>(x * m_MapTileSize);
+            const float posY = static_cast<float>(flippedY * m_MapTileSize);
+
+            if (IsWithinBounds(posX, posY))
+            {
+                Terra::Renderer::DrawQuad(
+                 glm::vec3(posX,posY,1.f),
+                 glm::vec3(static_cast<float>(m_MapTileSize)),
+                 m_Texture,
+                 GetTextureCoordinates(m_MapData[y][x]).data()
+                 ); 
+            }
         }
     }
+}
+
+//Make sure we check if the tiles are within the camera bounds so that we dont create vertices when its not needed.
+bool Map::IsWithinBounds(float x, float y) const
+{
+    return ((x >= 0 + m_CameraRef->GetPosition().x || x + m_MapTileSize >= 0 + m_CameraRef->GetPosition().x) &&
+                (x <= Terra::Application::GetApplication()->GetWindowBuffer().x + m_CameraRef->GetPosition().x) &&
+                (y >= 0 + m_CameraRef->GetPosition().y || y + m_MapTileSize >= 0 + m_CameraRef->GetPosition().y) &&
+                (y <= Terra::Application::GetApplication()->GetWindowBuffer().y + m_CameraRef->GetPosition().y));
 }
 
 std::array<glm::vec2,4> Map::GetTextureCoordinates(const int tileID) const

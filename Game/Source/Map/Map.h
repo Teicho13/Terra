@@ -4,15 +4,22 @@
 #include <fwd.hpp>
 #include "Core/Rendering/Texture.h"
 
+namespace Terra
+{
+    class Camera;
+}
+
 class Map
 {
 public:
 
     void SetMapData(const std::string& mapPath);
     void SetMapTexture(const std::string& mapTexturePath);
+    void SetCamera(Terra::Camera* camera);
 
     void DrawMap() const;
 
+    bool IsWithinBounds(float x, float y) const;
     std::array<glm::vec2,4> GetTextureCoordinates(int tileID) const;
 
     static constexpr int m_MapRows = 23;
@@ -22,4 +29,5 @@ public:
 private:
     std::shared_ptr<Terra::Texture> m_Texture = nullptr;
     std::array<std::array<int,m_MapColumns>,m_MapRows> m_MapData = {};
+    Terra::Camera* m_CameraRef = nullptr;
 };

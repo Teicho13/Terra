@@ -26,6 +26,7 @@ TestScene::TestScene()
     m_AnimatedSpriteTest.GetAnimation().Play();
     m_AnimatedSpriteTest.SetPosition({300.f,200.f,1.f});
 
+    m_TestMap.SetCamera(&m_CameraManager.GetCamera());
     m_TestMap.SetMapData(Terra::FileIO::GetGameFile("Tilemaps\\Data\\FirstMap.csv"));
     m_TestMap.SetMapTexture(Terra::FileIO::GetGameFile("Tilemaps\\GeneralTiles.png"));
     

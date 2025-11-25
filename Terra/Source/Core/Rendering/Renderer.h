@@ -33,10 +33,12 @@ namespace Terra
         static void DrawQuad(const glm::vec3& position,  const glm::vec3& size, const std::shared_ptr<Texture>& texture,glm::vec2 textureCoords[4]);
         
         static void RenderScene(const Camera& camera);
-        static void FlushBatch();
         static void Flush();
         static void Clear();
+        
     private:
+        static void DrawQuadInternal(const glm::mat4& transform, const glm::vec4& color, const std::shared_ptr<Texture>& texture = nullptr, glm::vec2 textureCoords[4] = nullptr);
+        static void FlushBatch();
         static void DrawIndices(VertexArray& va, GLsizei count);
     };   
 }

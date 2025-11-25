@@ -156,9 +156,19 @@ namespace Terra
         }
     }
 
+    void Application::RequestEnd()
+    {
+        m_IsRunning = false;
+    }
+
     std::vector<std::unique_ptr<Scene>>& Application::GetScenes()
     {
         return m_Scenes;
+    }
+
+    std::shared_ptr<Window>& Application::GetWindow()
+    {
+        return m_Window;
     }
 
     glm::vec2 Application::GetWindowBuffer() const

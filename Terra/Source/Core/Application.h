@@ -14,11 +14,15 @@ namespace Terra
         ~Application();
 
         void Run();
+        void RequestEnd();
+        
         std::vector<std::unique_ptr<Scene>>& GetScenes();
+        std::shared_ptr<Window>& GetWindow();
         
         glm::vec2 GetWindowBuffer() const;
         static Application* GetApplication();
         static float GetTime();
+        
         
 
         template <typename TScene>

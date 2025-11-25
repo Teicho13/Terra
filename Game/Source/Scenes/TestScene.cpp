@@ -38,26 +38,15 @@ TestScene::~TestScene()
 
 void TestScene::Update(float DeltaTime)
 {
+    m_CameraManager.Update(DeltaTime);
+    
     m_AnimatedSpriteTest.Update(DeltaTime);
     m_AnimatedSpriteTest.SetScale(glm::vec3(32.f,32.f,1.f));
 }
 
-//Temp function
-glm::vec3 lerp(const glm::vec3& a, const glm::vec3& b, float t) {
-
-    return {
-        a.x + (b.x - a.x) * t,
-        a.y + (b.y - a.y) * t,
-        a.z + (b.z - a.z) * t
-    };
-}
-
-//Temp variables
-bool ButtonWasPressed = false;
-
 void TestScene::Render()
 {
-    Terra::Renderer::RenderScene(m_camera);
+    Terra::Renderer::RenderScene(m_CameraManager.GetCamera());
     
     m_TestMap.DrawMap();
     m_AnimatedSpriteTest.Draw();
@@ -71,9 +60,8 @@ void TestScene::Render()
 
     ImGui::Begin("Window");
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-    ImGui::Text("E is pressed: %s", ButtonWasPressed ? "true" : "false");
-    ImGui::Text("Camera Position: X: %.2f Y: %.2f Z: %.2f", m_camera.GetPosition().x,m_camera.GetPosition().y,m_camera.GetPosition().z);
-    ImGui::Text("Camera ZoomLevel: %.2f", m_camera.GetZoomLevel());
+    ImGui::Text("Camera Position: X: %.2f Y: %.2f Z: %.2f", m_CameraManager.GetPosition().x,m_CameraManager.GetPosition().y,m_CameraManager.GetPosition().z);
+    ImGui::Text("Camera ZoomLevel: %.2f", m_CameraManager.GetCamera().GetZoomLevel());
     ImGui::Text("Quads: %d", Terra::RenderStats::s_DrawnQuads);
     ImGui::Text("Textures used: %d", Terra::RenderStats::s_DrawnTextures);
     ImGui::Text("Draw Calls: %d", Terra::RenderStats::s_DrawCalls);
@@ -85,59 +73,24 @@ void TestScene::Render()
 
 void TestScene::OnInputPressed(int key, int scancode, int mods)
 {
-    if (key == GLFW_KEY_E)
-    {
-        ButtonWasPressed = true;
-    }
-
-    if (key == GLFW_KEY_A)
-    {
-        auto newPos = m_camera.GetPosition();
-        newPos.x -= 1.f;
-        m_camera.SetPosition(newPos);
-    }
-
-    if (key == GLFW_KEY_D)
-    {
-        auto newPos = m_camera.GetPosition();
-        newPos.x += 1.f;
-        m_camera.SetPosition(newPos);
-    }
-
+    
     if (key == GLFW_KEY_EQUAL)
     {
-        float zoom = m_camera.GetZoomLevel();
-        m_camera.SetZoomLevel(zoom - 0.1f);
+        float zoom = m_CameraManager.GetCamera().GetZoomLevel();
+        m_CameraManager.GetCamera().SetZoomLevel(zoom - 0.1f);
     }
 
     if (key == GLFW_KEY_MINUS)
     {
-        float zoom = m_camera.GetZoomLevel();
-        m_camera.SetZoomLevel(zoom + 0.1f);
+        float zoom = m_CameraManager.GetCamera().GetZoomLevel();
+        m_CameraManager.GetCamera().SetZoomLevel(zoom + 0.1f);
     }
 }
 
 void TestScene::OnInputReleased(int key, int scancode, int mods)
 {
-    if (key == GLFW_KEY_E)
+    if (key == GLFW_KEY_ESCAPE)
     {
-        ButtonWasPressed = false;
-    }
-}
-
-void TestScene::OnInputHeld(int key, int scancode, int mods)
-{
-    if (key == GLFW_KEY_A)
-    {
-        auto newPos = m_camera.GetPosition();
-        newPos.x -= 1.f;
-        m_camera.SetPosition(newPos);
-    }
-
-    if (key == GLFW_KEY_D)
-    {
-        auto newPos = m_camera.GetPosition();
-        newPos.x += 1.0f;
-        m_camera.SetPosition(newPos);
+        Terra::Application::GetApplication()->RequestEnd();
     }
 }

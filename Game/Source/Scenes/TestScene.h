@@ -1,8 +1,8 @@
 #pragma once
 #include "AnimatedSprite.h"
+#include "../CameraManager.h"
 #include "../Map/Map.h"
 #include "Core/Scene.h"
-#include "Core/Rendering/Camera.h"
 
 
 class TestScene : public Terra::Scene
@@ -16,10 +16,10 @@ public:
     
     void OnInputPressed(int key, int scancode, int mods) override;
     void OnInputReleased(int key, int scancode, int mods) override;
-    void OnInputHeld(int key, int scancode, int mods) override;
+    void OnInputHeld(int key, int scancode, int mods) override {}
 
 private:
-    Terra::Camera m_camera;
+    CameraManager m_CameraManager;
     Terra::AnimatedSprite m_AnimatedSpriteTest;
     Map m_TestMap;
 };

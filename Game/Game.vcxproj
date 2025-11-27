@@ -93,7 +93,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Terra\Source;$(SolutionDir)External\OpenGL\GLFW\Include;$(SolutionDir)External\OpenGL\GLAD\include;$(SolutionDir)External\OpenGL\glm;$(SolutionDir)External\stb;$(SolutionDir)Terra\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Terra\Source;$(SolutionDir)External\OpenGL\GLFW\Include;$(SolutionDir)External\OpenGL\GLAD\include;$(SolutionDir)External\OpenGL\glm;$(SolutionDir)External\stb;$(SolutionDir)Terra\imgui;$(SolutionDir)External\PerlinNoise;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,7 +115,7 @@ xcopy /E  /Y "$(ProjectDir)Assets" "$(OutDir)Assets\$(ProjectName)"</Command>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Terra\Source;$(SolutionDir)External\OpenGL\GLFW\Include;$(SolutionDir)External\OpenGL\GLAD\include;$(SolutionDir)External\OpenGL\glm;$(SolutionDir)External\stb;$(SolutionDir)Terra\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Terra\Source;$(SolutionDir)External\OpenGL\GLFW\Include;$(SolutionDir)External\OpenGL\GLAD\include;$(SolutionDir)External\OpenGL\glm;$(SolutionDir)External\stb;$(SolutionDir)Terra\imgui;$(SolutionDir)External\PerlinNoise;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -135,7 +135,7 @@ xcopy /E  /Y "$(ProjectDir)Assets" "$(OutDir)Assets\$(ProjectName)"</Command>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Terra\Source;$(SolutionDir)External\OpenGL\GLFW\Include;$(SolutionDir)External\OpenGL\GLAD\include;$(SolutionDir)External\OpenGL\glm;$(SolutionDir)External\stb;$(SolutionDir)Terra\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Terra\Source;$(SolutionDir)External\OpenGL\GLFW\Include;$(SolutionDir)External\OpenGL\GLAD\include;$(SolutionDir)External\OpenGL\glm;$(SolutionDir)External\stb;$(SolutionDir)Terra\imgui;$(SolutionDir)External\PerlinNoise;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -157,7 +157,7 @@ xcopy /E  /Y "$(ProjectDir)Assets" "$(OutDir)Assets\$(ProjectName)"</Command>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Terra\Source;$(SolutionDir)External\OpenGL\GLFW\Include;$(SolutionDir)External\OpenGL\GLAD\include;$(SolutionDir)External\OpenGL\glm;$(SolutionDir)External\stb;$(SolutionDir)Terra\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Terra\Source;$(SolutionDir)External\OpenGL\GLFW\Include;$(SolutionDir)External\OpenGL\GLAD\include;$(SolutionDir)External\OpenGL\glm;$(SolutionDir)External\stb;$(SolutionDir)Terra\imgui;$(SolutionDir)External\PerlinNoise;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -173,11 +173,15 @@ xcopy /E  /Y "$(ProjectDir)Assets" "$(OutDir)Assets\$(ProjectName)"</Command>
   <ItemGroup>
     <ClCompile Include="Source\CameraManager.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Map\Chunk.cpp" />
+    <ClCompile Include="Source\Map\ChunkManager.cpp" />
     <ClCompile Include="Source\Map\Map.cpp" />
     <ClCompile Include="Source\Scenes\TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\CameraManager.h" />
+    <ClInclude Include="Source\Map\Chunk.h" />
+    <ClInclude Include="Source\Map\ChunkManager.h" />
     <ClInclude Include="Source\Map\Map.h" />
     <ClInclude Include="Source\Scenes\TestScene.h" />
   </ItemGroup>

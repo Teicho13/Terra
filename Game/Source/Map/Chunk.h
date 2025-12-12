@@ -19,7 +19,7 @@ public:
     //Max amount of tiles (width) inside a single chunk
     static constexpr int MAX_TILES_WIDTH = 16;
     //Max amount of tiles (height) inside a single chunk
-    static constexpr int MAX_TILES_HEIGHT = 32;
+    static constexpr int MAX_TILES_HEIGHT = 64;
 
 private:
     void FillChunk(int test);

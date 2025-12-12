@@ -177,6 +177,7 @@ xcopy /E  /Y "$(ProjectDir)Assets" "$(OutDir)Assets\$(ProjectName)"</Command>
     <ClCompile Include="Source\Map\ChunkManager.cpp" />
     <ClCompile Include="Source\Map\Map.cpp" />
     <ClCompile Include="Source\Scenes\TestScene.cpp" />
+    <ClCompile Include="Source\Terrain\TerrainGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\CameraManager.h" />
@@ -184,6 +185,7 @@ xcopy /E  /Y "$(ProjectDir)Assets" "$(OutDir)Assets\$(ProjectName)"</Command>
     <ClInclude Include="Source\Map\ChunkManager.h" />
     <ClInclude Include="Source\Map\Map.h" />
     <ClInclude Include="Source\Scenes\TestScene.h" />
+    <ClInclude Include="Source\Terrain\TerrainGenerator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

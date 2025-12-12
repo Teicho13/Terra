@@ -18,7 +18,7 @@ void ChunkManager::CreateChunks()
 {
    for (int x = 0; x < MAX_CHUNKS_WIDTH; ++x)
    {
-       const glm::vec2 chunkPos = glm::vec2(x * Chunk::MAX_TILES_WIDTH * 16, 0 * Chunk::MAX_TILES_HEIGHT * 16);
+       const glm::vec2 chunkPos = glm::vec2(x * Chunk::MAX_TILES_WIDTH * 16, (0 * Chunk::MAX_TILES_HEIGHT * 16) - 640);
        m_Chunks.emplace_back(std::make_unique<Chunk>(chunkPos,this,x));
    }
 }

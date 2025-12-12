@@ -3,6 +3,7 @@
 #include "../CameraManager.h"
 #include "../Map/ChunkManager.h"
 #include "../Map/Map.h"
+#include "../Terrain/TerrainGenerator.h"
 #include "Core/Scene.h"
 
 
@@ -24,4 +25,5 @@ private:
     Terra::AnimatedSprite m_AnimatedSpriteTest;
     Map m_TestMap;
     ChunkManager m_ChunkManager;
+    TerrainGenerator m_TerrainGenerator;
 };

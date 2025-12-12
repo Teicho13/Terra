@@ -27,16 +27,37 @@ TerrainGenerator::TerrainGenerator()
 
 void TerrainGenerator::Render()
 {
+    glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     for (int i = 0; i < m_WorldSize; ++i)
     {
-        float height = perlin.noise2D_01(i * m_NoiseFrequency,  m_NoiseFrequency) * 40.f + 150;
+        float height = perlin.noise2D_01(i * m_NoiseFrequency,  m_NoiseFrequency) * m_NoiseHeightMultiplier + m_NoiseHeightAddition;
         for (int j = 0; j < height; ++j)
         {
-            
-            if (m_PerlinValues[i][j] > 0.2)
+            if (j < height - m_DirtHeight)
             {
-                Terra::Renderer::DrawQuad(glm::vec3(i,j ,0.f),glm::vec3(1.f,1.f,0.f),glm::vec4(1.f));   
+                color = {0.3f,0.3f,0.3f,1.f};
             }
+            else if (j < height - 1)
+            {
+                color = {0.3f,0.1f,0.f,1.f};
+            }
+            else
+            {
+                color = {0.f,1.f,0.f,1.f};
+            }
+
+            if (m_GenerateCaves)
+            {
+                if (m_PerlinValues[i][j] > 0.2)
+                {
+                    Terra::Renderer::DrawQuad(glm::vec3(i,j ,0.f),glm::vec3(1.f,1.f,0.f),color);   
+                }
+            }
+            else
+            {
+                Terra::Renderer::DrawQuad(glm::vec3(i,j ,0.f),glm::vec3(1.f,1.f,0.f),color);   
+            }
+            
         }
     }
 }

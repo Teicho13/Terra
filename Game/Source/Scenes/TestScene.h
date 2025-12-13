@@ -1,7 +1,6 @@
 #pragma once
 #include "AnimatedSprite.h"
 #include "../CameraManager.h"
-#include "../Map/ChunkManager.h"
 #include "../Map/Map.h"
 #include "../Terrain/TerrainGenerator.h"
 #include "Core/Scene.h"
@@ -24,6 +23,5 @@ private:
     CameraManager m_CameraManager;
     Terra::AnimatedSprite m_AnimatedSpriteTest;
     Map m_TestMap;
-    ChunkManager m_ChunkManager;
     TerrainGenerator m_TerrainGenerator;
 };

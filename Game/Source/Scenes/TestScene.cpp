@@ -30,9 +30,7 @@ TestScene::TestScene()
     m_TestMap.SetMapData(Terra::FileIO::GetGameFile("Tilemaps\\Data\\FirstMap.csv"));
     m_TestMap.SetMapTexture(Terra::FileIO::GetGameFile("Tilemaps\\GeneralTiles.png"));
 
-    /*m_ChunkManager.SetActiveCamera(&m_CameraManager.GetCamera());
-    m_ChunkManager.SetTerrainTexture(Terra::FileIO::GetGameFile("Terrain\\BasicTiles.png"));
-    m_ChunkManager.CreateChunks();*/
+    m_TerrainGenerator.CreateChunks();
 }
 
 TestScene::~TestScene()
@@ -54,8 +52,8 @@ void TestScene::Render()
     
     //m_TestMap.DrawMap();
     //m_AnimatedSpriteTest.Draw();
-    //m_ChunkManager.RenderChunks();
     m_TerrainGenerator.Render();
+
 
     //Draw all gathered indices.
     Terra::Renderer::Flush();

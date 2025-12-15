@@ -30,6 +30,8 @@ TestScene::TestScene()
     m_TestMap.SetMapData(Terra::FileIO::GetGameFile("Tilemaps\\Data\\FirstMap.csv"));
     m_TestMap.SetMapTexture(Terra::FileIO::GetGameFile("Tilemaps\\GeneralTiles.png"));
 
+    m_TerrainGenerator.SetTerrainTexture(Terra::FileIO::GetGameFile("Terrain\\BasicTiles.png"));
+    m_TerrainGenerator.SetActiveCamera(&m_CameraManager.GetCamera());
     m_TerrainGenerator.CreateChunks();
 }
 

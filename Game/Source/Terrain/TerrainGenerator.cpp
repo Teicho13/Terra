@@ -5,9 +5,9 @@
 #include "Core/ResourceManager.h"
 #include "Core/Rendering/Renderer.h"
 
-#include <vec3.hpp>
-#include <vec4.hpp>
 #include "Chunk.h"
+#include "Core/Application.h"
+#include "Core/Rendering/Camera.h"
 
 TerrainGenerator::TerrainGenerator()
 {
@@ -32,14 +32,14 @@ TerrainGenerator::~TerrainGenerator()
 void TerrainGenerator::CreateChunks()
 {
     constexpr int chunkAmount = m_WorldSize / CHUNK_WIDTH;
-    glm::vec4 color = glm::vec4(0.f);
+    TileType tileType = TileType::Air;
 
     int PerlinAccumulator = 0;
     
     m_Chunks.reserve(chunkAmount);
     for (int i = 0; i < chunkAmount; ++i)
     {
-        m_Chunks.emplace_back(std::make_unique<Chunk>(glm::vec2(i * CHUNK_WIDTH,-CHUNK_HEIGHT)));
+        m_Chunks.emplace_back(std::make_unique<Chunk>(glm::vec2(i * (CHUNK_WIDTH * TILE_SIZE),(-CHUNK_HEIGHT * TILE_SIZE) / 2),this));
 
         for (int x = 0; x < CHUNK_WIDTH; ++x)
         {
@@ -49,21 +49,20 @@ void TerrainGenerator::CreateChunks()
             {
                 if (y < height - m_DirtHeight)
                 {
-                    color = {0.3f,0.3f,0.3f,1.f};
+                    tileType = TileType::Stone;
                 }
                 else if (y < height - 1)
                 {
-                    color = {0.3f,0.1f,0.f,1.f};
+                    tileType = TileType::Dirt;
                 }
                 else
                 {
-                    color = {0.f,1.f,0.f,1.f};
+                    tileType = TileType::Grass;
                 }
 
                 if (y > height)
                 {
-                    color = {0.4f,0.3f,0.6f,1.f};
-                    m_Chunks[i]->m_ChunkData[x][y] = color;
+                    m_Chunks[i]->m_ChunkData[x][y] = static_cast<int>(TileType::Air);
                     continue;
                 }
                 
@@ -72,16 +71,16 @@ void TerrainGenerator::CreateChunks()
                     double cavePerlin = perlin.noise2D_01(PerlinAccumulator * m_CaveFrequency, y * m_CaveFrequency);
                     if (cavePerlin > 0.2 || (y > height - m_CaveMinDepth))
                     {
-                        m_Chunks[i]->m_ChunkData[x][y] = color;  
+                        m_Chunks[i]->m_ChunkData[x][y] = static_cast<int>(tileType);  
                     }
                     else
                     {
-                        m_Chunks[i]->m_ChunkData[x][y] = {1.f,1.f,0.f};  
+                        m_Chunks[i]->m_ChunkData[x][y] = static_cast<int>(TileType::Air);  
                     }
                 }
                 else
                 {
-                    m_Chunks[i]->m_ChunkData[x][y] = color;  
+                    m_Chunks[i]->m_ChunkData[x][y] = static_cast<int>(tileType);  
                 }
                 
                 
@@ -96,13 +95,41 @@ void TerrainGenerator::Render() const
 {
     for (const auto& chunk : m_Chunks)
     {
-        for (int x = 0; x < CHUNK_WIDTH; ++x)
+        if (IsChunkInView(chunk->getPosition().x))
         {
-            for (int y = 0; y < CHUNK_HEIGHT; ++y)
-            {
-                glm::vec4 color = {chunk->m_ChunkData[x][y],1.f};
-                Terra::Renderer::DrawQuad(glm::vec3(chunk->getPosition().x + x, chunk->getPosition().y + y,0.f),glm::vec3(1.f,1.f,0.f),color); 
-            }
+            chunk->Render(m_Texture);
         }
     }
+}
+
+bool TerrainGenerator::IsChunkInView(const float x) const
+{
+    //If there is no active camera we just render regardless.
+    if (!m_CameraRef) return true;
+
+    const auto camPos = GetCameraRef()->GetPosition();
+    return ((x >= 0 + camPos.x || x + static_cast<float>(CHUNK_WIDTH * TILE_SIZE) >= 0 + camPos.x) &&
+            (x <= Terra::Application::GetApplication()->GetWindowBuffer().x + camPos.x));
+}
+
+Terra::Texture* TerrainGenerator::GetTextureRef() const
+{
+    return m_Texture.get();
+}
+
+Terra::Camera* TerrainGenerator::GetCameraRef() const
+{
+    return m_CameraRef;
+}
+
+void TerrainGenerator::SetTerrainTexture(const std::string& TerrainTexturePath)
+{
+    m_Texture.reset();
+    
+    m_Texture = Terra::ResourceManager::GetInstance().GetTexture(TerrainTexturePath); 
+}
+
+void TerrainGenerator::SetActiveCamera(Terra::Camera* camera)
+{
+    m_CameraRef = camera;
 }

@@ -17,7 +17,7 @@ public:
     bool IsTileInView(float x, float y) const;
     glm::vec2 getPosition() const;
 
-   std::array<std::array<int,TerrainGenerator::CHUNK_HEIGHT>,TerrainGenerator::CHUNK_WIDTH> m_ChunkData;
+   std::array<std::array<int,TerrainGenerator::CHUNK_HEIGHT>,TerrainGenerator::CHUNK_WIDTH> m_ChunkData {};
 
 private:
     TerrainGenerator* m_TerrainGeneratorRef = nullptr;

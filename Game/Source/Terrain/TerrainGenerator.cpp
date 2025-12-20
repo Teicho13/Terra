@@ -20,13 +20,19 @@ TerrainGenerator::TerrainGenerator()
     m_Seed = static_cast<unsigned int>(dist(m_Generator));
 
     const siv::PerlinNoise::seed_type seed = m_Seed;
-    //const siv::PerlinNoise::seed_type seed = 1234u; <-- Use for testing same seed
+    //const siv::PerlinNoise::seed_type seed = 1234u; /*<-- Use for testing same seed*/
     perlin.reseed(seed);
 }
 
 TerrainGenerator::~TerrainGenerator()
 {
     m_Chunks.clear();
+}
+
+void TerrainGenerator::StartGeneration()
+{
+    CreateChunks();
+    GenerateOres();
 }
 
 void TerrainGenerator::CreateChunks()
@@ -79,11 +85,55 @@ void TerrainGenerator::CreateChunks()
                 if (m_GenerateCaves)
                 {
                     const double cavePerlin = perlin.noise2D_01(PerlinAccumulator * m_CaveFrequency, y * m_CaveFrequency);
-                    const bool ShouldBeEmpty = cavePerlin > 0.2 || (static_cast<float>(y) > height - static_cast<float>(m_CaveMinDepth));
+                    const bool ShouldBeEmpty = cavePerlin > m_CaveSizeLimit || (static_cast<float>(y) > height - static_cast<float>(m_CaveMinDepth));
                     tileType = ShouldBeEmpty ? tileType : TileType::Air;
                 }
-
+                
                 chunk->m_ChunkData[x][y] = static_cast<int>(tileType);  
+            }
+
+            PerlinAccumulator++;
+        }
+    }
+}
+
+void TerrainGenerator::GenerateOres() const
+{
+    int PerlinAccumulator = 0;
+    
+    for (const auto& chunk : m_Chunks)
+    {
+        for (int x = 0; x < CHUNK_WIDTH; ++x)
+        {
+            //Random generate a value for the height of the current x position.
+            const float height = static_cast<float>(perlin.noise2D_01(PerlinAccumulator * m_NoiseFrequency,  m_NoiseFrequency))
+            * m_NoiseHeightMultiplier + static_cast<float>(m_NoiseHeightAddition);
+            
+            for (int y = 0; y < CHUNK_HEIGHT; ++y)
+            {
+                //If we are above the terrain exit early. 
+                if (static_cast<float>(y) > height)
+                {
+                    continue;
+                }
+
+                const double cavePerlin = perlin.noise2D_01(PerlinAccumulator * m_OreFrequency, y * m_OreFrequency);
+                if (cavePerlin > m_OreSizeLimit && (static_cast<float>(y) < height - static_cast<float>(m_CaveMinDepth)))
+                {
+                    chunk->m_ChunkData[x][y] = static_cast<int>(TileType::Ore); 
+                }
+
+                const double cavePerlin2 = perlin.noise2D_01(PerlinAccumulator * m_Seed * m_Ore2Frequency, y * m_Ore2Frequency);
+                if (cavePerlin2 > m_Ore2SizeLimit && (static_cast<float>(y) < m_MaxOre2Height))
+                {
+                    chunk->m_ChunkData[x][y] = static_cast<int>(TileType::Ore2); 
+                }
+
+                const double cavePerlin3 = perlin.noise2D_01(PerlinAccumulator + m_Seed * m_Ore3Frequency, y * m_Ore3Frequency);
+                if (cavePerlin3 > m_Ore3SizeLimit && (static_cast<float>(y) < m_MaxOre3Height))
+                {
+                    chunk->m_ChunkData[x][y] = static_cast<int>(TileType::Ore3); 
+                }
             }
 
             PerlinAccumulator++;

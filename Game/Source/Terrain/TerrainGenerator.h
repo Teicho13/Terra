@@ -5,9 +5,15 @@
 enum class TileType
 {
     Air = 0,
-    Grass = 1,
-    Dirt = 2,
-    Stone = 3
+    Grass,
+    Dirt,
+    Stone,
+    Water,
+    Bark,
+    Leaf,
+    Ore,
+    Ore2,
+    Ore3
 };
 
 namespace Terra {class Camera;}
@@ -18,7 +24,9 @@ public:
     TerrainGenerator();
     ~TerrainGenerator();
 
+    void StartGeneration();
     void CreateChunks();
+    void GenerateOres() const;
     void Render() const;
     bool IsChunkInView(float x) const;
     
@@ -41,19 +49,32 @@ private:
     
     static constexpr int m_WorldSize = 360;
     unsigned int m_Seed;
-    bool m_GenerateCaves = true;
-
+    
     int m_DirtHeight = 8;
     int m_CaveMinDepth = 12;
 
-    //Perlin Noise properties
+    bool m_GenerateCaves = true;
+    double m_CaveFrequency = 0.08;
+    double m_CaveSizeLimit = 0.25;
+
+    bool m_GenerateOres = true;
+    
+    double m_OreFrequency = 0.1;
+    double m_OreSizeLimit = 0.75;
+
+    int m_MaxOre2Height = 30;
+    double m_Ore2Frequency = 0.1;
+    double m_Ore2SizeLimit = 0.8;
+
+    int m_MaxOre3Height = 20;
+    double m_Ore3Frequency = 0.1;
+    double m_Ore3SizeLimit = 0.85;
     
     siv::PerlinNoise perlin;
     float m_NoiseHeightMultiplier = 30.f;
     int m_NoiseHeightAddition = 60;
     double m_NoiseFrequency = 0.02;
-    double m_CaveFrequency = 0.08;
-
+    
     Terra::Camera* m_CameraRef = nullptr;
     std::shared_ptr<Terra::Texture> m_Texture = nullptr;
     

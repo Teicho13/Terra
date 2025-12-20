@@ -5,12 +5,9 @@
 enum class TileType
 {
     Air = 0,
-    Grass,
-    Dirt,
-    Stone,
-    Water,
-    Bark,
-    Leaf
+    Grass = 1,
+    Dirt = 2,
+    Stone = 3
 };
 
 namespace Terra {class Camera;}
@@ -24,8 +21,6 @@ public:
     void CreateChunks();
     void Render() const;
     bool IsChunkInView(float x) const;
-
-    void GenerateTree(int chunkIndex,int x, int y);
     
     Terra::Texture* GetTextureRef() const;
     Terra::Camera* GetCameraRef() const;
@@ -36,7 +31,7 @@ public:
     //Chunk properties
     
     static constexpr int CHUNK_WIDTH = 12;
-    static constexpr int CHUNK_HEIGHT = 228;
+    static constexpr int CHUNK_HEIGHT = 128;
     static constexpr int TILE_SIZE = 16;
 
 private:
@@ -50,9 +45,6 @@ private:
     int m_DirtHeight = 8;
     int m_CaveMinDepth = 12;
 
-    //Value represents top value eg 1 out of value.
-    int TreeSpawnChance = 50;
-
     //Perlin Noise properties
     
     siv::PerlinNoise perlin;
@@ -61,10 +53,8 @@ private:
     double m_NoiseFrequency = 0.02;
     double m_CaveFrequency = 0.08;
 
-    Terra::Camera* m_CameraRef = nullptr;
+    Terra::Camera* m_CameraRef;
     std::shared_ptr<Terra::Texture> m_Texture = nullptr;
     
     std::vector<std::unique_ptr<Chunk>> m_Chunks;
-    
-    std::mt19937 gen;
 };

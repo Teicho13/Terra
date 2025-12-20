@@ -1,5 +1,4 @@
 #include "TerrainGenerator.h"
-
 #include <random>
 
 #include "PerlinNoise.hpp"
@@ -13,10 +12,10 @@
 TerrainGenerator::TerrainGenerator()
 {
     std::random_device rd;
-    gen = std::mt19937(rd());
+    std::mt19937 gen(rd());
 
     // Generate a random float to use as a seed
-
+    
     std::uniform_real_distribution<float> dist(0.f, 9999.f);
     m_Seed = static_cast<unsigned int>(dist(gen));
 
@@ -36,12 +35,11 @@ void TerrainGenerator::CreateChunks()
     TileType tileType = TileType::Air;
 
     int PerlinAccumulator = 0;
-    std::uniform_real_distribution<float> dist(1.f, static_cast<float>(TreeSpawnChance));
     
     m_Chunks.reserve(chunkAmount);
     for (int i = 0; i < chunkAmount; ++i)
     {
-        m_Chunks.emplace_back(std::make_unique<Chunk>(glm::vec2(i * (CHUNK_WIDTH * TILE_SIZE),(-CHUNK_HEIGHT * TILE_SIZE) / 4),this));
+        m_Chunks.emplace_back(std::make_unique<Chunk>(glm::vec2(i * (CHUNK_WIDTH * TILE_SIZE),(-CHUNK_HEIGHT * TILE_SIZE) / 2),this));
 
         for (int x = 0; x < CHUNK_WIDTH; ++x)
         {
@@ -64,10 +62,7 @@ void TerrainGenerator::CreateChunks()
 
                 if (y > height)
                 {
-                    if (m_Chunks[i]->m_ChunkData[x][y] != static_cast<int>(TileType::Bark) && m_Chunks[i]->m_ChunkData[x][y] != static_cast<int>(TileType::Leaf))
-                    {
-                        m_Chunks[i]->m_ChunkData[x][y] = static_cast<int>(TileType::Air);
-                    }
+                    m_Chunks[i]->m_ChunkData[x][y] = static_cast<int>(TileType::Air);
                     continue;
                 }
                 
@@ -87,13 +82,10 @@ void TerrainGenerator::CreateChunks()
                 {
                     m_Chunks[i]->m_ChunkData[x][y] = static_cast<int>(tileType);  
                 }
+                
+                
             }
 
-            if (static_cast<unsigned int>(dist(gen)) == 1)
-            {
-                GenerateTree(i,x, static_cast<int>(height) + 1);
-            }
-            
             PerlinAccumulator++;
         }
     }
@@ -118,31 +110,6 @@ bool TerrainGenerator::IsChunkInView(const float x) const
     const auto camPos = GetCameraRef()->GetPosition();
     return ((x >= 0 + camPos.x || x + static_cast<float>(CHUNK_WIDTH * TILE_SIZE) >= 0 + camPos.x) &&
             (x <= Terra::Application::GetApplication()->GetWindowBuffer().x * GetCameraRef()->GetZoomLevel() + camPos.x));
-}
-
-void TerrainGenerator::GenerateTree(int chunkIndex, int x, int y)
-{
-    if (x == 0 || x == CHUNK_WIDTH - 1) return;
-    
-    std::uniform_real_distribution<float> dist(3.f, 5.f);
-    unsigned int TreeHeight = dist(gen);
-
-    //Temp ugly hardcode
-    for (int i = 0; i < TreeHeight; ++i)
-    {
-        m_Chunks[chunkIndex]->m_ChunkData[x][y + i] = static_cast<int>(TileType::Bark);  
-    }
-
-    m_Chunks[chunkIndex]->m_ChunkData[x][y + TreeHeight] = static_cast<int>(TileType::Leaf);  
-    m_Chunks[chunkIndex]->m_ChunkData[x][y + TreeHeight + 1] = static_cast<int>(TileType::Leaf);  
-    m_Chunks[chunkIndex]->m_ChunkData[x][y + TreeHeight + 2] = static_cast<int>(TileType::Leaf);
-
-    m_Chunks[chunkIndex]->m_ChunkData[x + 1][y + TreeHeight] = static_cast<int>(TileType::Leaf);  
-    m_Chunks[chunkIndex]->m_ChunkData[x + 1][y + TreeHeight + 1] = static_cast<int>(TileType::Leaf);
-
-    m_Chunks[chunkIndex]->m_ChunkData[x - 1][y + TreeHeight] = static_cast<int>(TileType::Leaf);  
-    m_Chunks[chunkIndex]->m_ChunkData[x - 1][y + TreeHeight + 1] = static_cast<int>(TileType::Leaf); 
-    
 }
 
 Terra::Texture* TerrainGenerator::GetTextureRef() const

@@ -12,12 +12,12 @@
 TerrainGenerator::TerrainGenerator()
 {
     std::random_device rd;
-    std::mt19937 gen(rd());
+    m_Generator = std::mt19937(rd());
 
     // Generate a random float to use as a seed
     
-    std::uniform_real_distribution<float> dist(0.f, 9999.f);
-    m_Seed = static_cast<unsigned int>(dist(gen));
+    std::uniform_real_distribution dist(0.f, 9999.f);
+    m_Seed = static_cast<unsigned int>(dist(m_Generator));
 
     const siv::PerlinNoise::seed_type seed = m_Seed;
     //const siv::PerlinNoise::seed_type seed = 1234u; <-- Use for testing same seed
@@ -31,59 +31,59 @@ TerrainGenerator::~TerrainGenerator()
 
 void TerrainGenerator::CreateChunks()
 {
+    //Amount of chunks to make.
     constexpr int chunkAmount = m_WorldSize / CHUNK_WIDTH;
-    TileType tileType = TileType::Air;
+    
+    //Reserve the space so that we dont need to resize while adding all the data.
+    m_Chunks.reserve(chunkAmount);
 
+    //We store a counter so that we dont get repeating patterns when going from one chunk to another.
     int PerlinAccumulator = 0;
     
-    m_Chunks.reserve(chunkAmount);
+    std::uniform_real_distribution dirtOffsetDist(-1.f, 3.f);
+    
     for (int i = 0; i < chunkAmount; ++i)
     {
-        m_Chunks.emplace_back(std::make_unique<Chunk>(glm::vec2(i * (CHUNK_WIDTH * TILE_SIZE),(-CHUNK_HEIGHT * TILE_SIZE) / 2),this));
+        m_Chunks.emplace_back(std::make_unique<Chunk>(glm::vec2(i * (CHUNK_WIDTH * TILE_SIZE),0),this));
+        const auto& chunk = m_Chunks.back();
 
         for (int x = 0; x < CHUNK_WIDTH; ++x)
         {
-            //Random generate a value for the height of the current x position
-            float height = perlin.noise2D_01(PerlinAccumulator * m_NoiseFrequency,  m_NoiseFrequency) * m_NoiseHeightMultiplier + m_NoiseHeightAddition;
+            //Random generate a value for the height of the current x position.
+            const float height = static_cast<float>(perlin.noise2D_01(PerlinAccumulator * m_NoiseFrequency,  m_NoiseFrequency))
+            * m_NoiseHeightMultiplier + static_cast<float>(m_NoiseHeightAddition);
+
+            //Generate a random offset for the dirt height to add some verity.
+            const float dirtOffset = dirtOffsetDist(m_Generator);
+            
             for (int y = 0; y < CHUNK_HEIGHT; ++y)
             {
-                if (y < height - m_DirtHeight)
-                {
-                    tileType = TileType::Stone;
-                }
-                else if (y < height - 1)
-                {
-                    tileType = TileType::Dirt;
-                }
-                else
-                {
-                    tileType = TileType::Grass;
-                }
 
-                if (y > height)
+                //If we are above the terrain exit early. 
+                if (static_cast<float>(y) > height)
                 {
-                    m_Chunks[i]->m_ChunkData[x][y] = static_cast<int>(TileType::Air);
+                    chunk->m_ChunkData[x][y] = static_cast<int>(TileType::Air);
                     continue;
                 }
+
+                //Check our current tile to determine what tile to place.
+                TileType tileType;
+                if (static_cast<float>(y) < height - (static_cast<float>(m_DirtHeight) + dirtOffset))
+                    tileType = TileType::Stone;
+                else if (static_cast<float>(y) < height - 1)
+                    tileType = TileType::Dirt;
+                else
+                    tileType = TileType::Grass;
                 
+                //Check if we need to generate caves.
                 if (m_GenerateCaves)
                 {
-                    double cavePerlin = perlin.noise2D_01(PerlinAccumulator * m_CaveFrequency, y * m_CaveFrequency);
-                    if (cavePerlin > 0.2 || (y > height - m_CaveMinDepth))
-                    {
-                        m_Chunks[i]->m_ChunkData[x][y] = static_cast<int>(tileType);  
-                    }
-                    else
-                    {
-                        m_Chunks[i]->m_ChunkData[x][y] = static_cast<int>(TileType::Air);  
-                    }
+                    const double cavePerlin = perlin.noise2D_01(PerlinAccumulator * m_CaveFrequency, y * m_CaveFrequency);
+                    const bool ShouldBeEmpty = cavePerlin > 0.2 || (static_cast<float>(y) > height - static_cast<float>(m_CaveMinDepth));
+                    tileType = ShouldBeEmpty ? tileType : TileType::Air;
                 }
-                else
-                {
-                    m_Chunks[i]->m_ChunkData[x][y] = static_cast<int>(tileType);  
-                }
-                
-                
+
+                chunk->m_ChunkData[x][y] = static_cast<int>(tileType);  
             }
 
             PerlinAccumulator++;
@@ -120,6 +120,11 @@ Terra::Texture* TerrainGenerator::GetTextureRef() const
 Terra::Camera* TerrainGenerator::GetCameraRef() const
 {
     return m_CameraRef;
+}
+
+std::vector<std::unique_ptr<Chunk>>& TerrainGenerator::GetChunks()
+{
+    return m_Chunks;
 }
 
 void TerrainGenerator::SetTerrainTexture(const std::string& TerrainTexturePath)

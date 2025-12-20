@@ -33,6 +33,11 @@ TestScene::TestScene()
     m_TerrainGenerator.SetTerrainTexture(Terra::FileIO::GetGameFile("Terrain\\BasicTiles.png"));
     m_TerrainGenerator.SetActiveCamera(&m_CameraManager.GetCamera());
     m_TerrainGenerator.CreateChunks();
+
+    constexpr auto tileSize = TerrainGenerator::TILE_SIZE;
+    const int ChunkPerScreen = Terra::Application::GetApplication()->GetWindowBuffer().x / (TerrainGenerator::CHUNK_WIDTH * tileSize);
+    m_CameraManager.SetCameraLimits(0,((m_TerrainGenerator.GetChunks().size() - ChunkPerScreen) * TerrainGenerator::CHUNK_WIDTH) * tileSize,0,TerrainGenerator::CHUNK_HEIGHT * tileSize);
+    m_CameraManager.GetCamera().SetPosition({0,(TerrainGenerator::CHUNK_HEIGHT / 2) * tileSize,0});
 }
 
 TestScene::~TestScene()

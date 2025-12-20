@@ -31,30 +31,71 @@ void CameraManager::CheckCameraMovement(float deltaTime)
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {
         auto newPos = m_camera.GetPosition();
-        newPos.y += m_CameraSpeed * deltaTime;
-        m_camera.SetPosition(newPos);
+        if (newPos.y < m_VerticalLimit.y)
+        {
+            newPos.y += m_CameraSpeed * deltaTime;
+        }
+        else
+        {
+            newPos.y = m_VerticalLimit.y;
+        }
+
+        m_camera.SetPosition(newPos); 
     }
 
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
         auto newPos = m_camera.GetPosition();
-        newPos.y += -m_CameraSpeed * deltaTime;
-        m_camera.SetPosition(newPos);
-    }
+        if (newPos.y > m_VerticalLimit.x)
+        {
+            newPos.y += -m_CameraSpeed * deltaTime;
+        }
+        else
+        {
+            newPos.y = m_VerticalLimit.x;
+        }
 
+        m_camera.SetPosition(newPos); 
+    }
+    
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
         auto newPos = m_camera.GetPosition();
-        newPos.x += -m_CameraSpeed * deltaTime;
+        if (newPos.x > m_HorizontalLimit.x)
+        {
+            newPos.x += -m_CameraSpeed * deltaTime;
+        }
+        else
+        {
+            newPos.x = m_HorizontalLimit.x;
+        }
+
         m_camera.SetPosition(newPos);
     }
 
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
         auto newPos = m_camera.GetPosition();
-        newPos.x += m_CameraSpeed * deltaTime;
+        if (newPos.x < m_HorizontalLimit.y)
+        {
+            newPos.x += m_CameraSpeed * deltaTime;
+        }
+        else
+        {
+            newPos.x = m_HorizontalLimit.y;
+        }
+
         m_camera.SetPosition(newPos);
     }
+}
+
+void CameraManager::SetCameraLimits(const float left, const float right, const float bottom, const float top)
+{
+    m_HorizontalLimit.x = left;
+    m_HorizontalLimit.y = right;
+
+    m_VerticalLimit.x = bottom;
+    m_VerticalLimit.y = top;
 }
 
 Terra::Camera& CameraManager::GetCamera()

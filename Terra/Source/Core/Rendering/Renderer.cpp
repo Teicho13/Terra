@@ -130,7 +130,7 @@ namespace Terra
     void Renderer::Clear()
     {
         //Clear screen
-        glClearColor(0.f, 0.1f, 0.2f, 255.f);
+        glClearColor(0.384f, 0.757f, 0.9f, 255.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 

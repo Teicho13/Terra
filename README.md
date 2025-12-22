@@ -1,15 +1,16 @@
 # Terra
-A custom framework and application to learn about the basics of graphics programming. Currently I am mostly focusing on 2D rendering.
+A custom framework and application to learn about the basics of graphics programming. Currently I am mostly focusing on 2D rendering and working on a Terraria-esque project.
 
 ## :books: Libraries used
 * OpenGL (GLAD / GLFW)
 * ImGUI
 * GLM
 * STB (Image)
+* PerlinNoise (By Reputeless)
 ## :movie_camera: Showcase
 ![Terra Example Showcase video](https://www.tychocharko.com/projects/Personal/Terra/images/TerraShowcase.gif)
 
-![Terra Map Showcase](https://www.tychocharko.com/projects/Personal/Terra/images/TerraMapShowcase.webp)
+![Terra Terrain Generation Showcase](https://www.tychocharko.com/projects/Personal/Terra/images/TerraGenerationShowcase.gif)
 
 ## :video_game: Controls
 

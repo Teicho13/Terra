@@ -22,6 +22,10 @@ TerrainGenerator::TerrainGenerator()
     const siv::PerlinNoise::seed_type seed = m_Seed;
     //const siv::PerlinNoise::seed_type seed = 1234u; /*<-- Use for testing same seed*/
     perlin.reseed(seed);
+
+    m_OreGenerationSettings.emplace_back(TileType::Copper,0.15,0.8,m_NoiseHeightAddition);
+    m_OreGenerationSettings.emplace_back(TileType::Gold,0.15,0.8,m_NoiseHeightAddition - 20);
+    m_OreGenerationSettings.emplace_back(TileType::Diamond,0.15,0.85,10);
 }
 
 TerrainGenerator::~TerrainGenerator()
@@ -32,7 +36,10 @@ TerrainGenerator::~TerrainGenerator()
 void TerrainGenerator::StartGeneration()
 {
     CreateChunks();
-    GenerateOres();
+    if (m_GenerateOres)
+    {
+       GenerateOres(); 
+    }
 }
 
 void TerrainGenerator::CreateChunks()
@@ -97,48 +104,46 @@ void TerrainGenerator::CreateChunks()
     }
 }
 
-void TerrainGenerator::GenerateOres() const
+void TerrainGenerator::GenerateOres()
 {
-    int PerlinAccumulator = 0;
-    
-    for (const auto& chunk : m_Chunks)
+    //for now we loop over every ore type and then the terrain.
+    for (size_t i = 0; i < m_OreGenerationSettings.size(); ++i)
     {
-        for (int x = 0; x < CHUNK_WIDTH; ++x)
+        //We reseed for every ore type we generate.
+        const siv::PerlinNoise::seed_type tempSeed = m_Seed + static_cast<unsigned int>(123u * i);
+        perlin.reseed(tempSeed);
+        
+        int PerlinAccumulator = 0;
+        
+        const auto& oreSetting = m_OreGenerationSettings[i];
+
+        for (const auto& chunk : m_Chunks)
         {
-            //Random generate a value for the height of the current x position.
-            const float height = static_cast<float>(perlin.noise2D_01(PerlinAccumulator * m_NoiseFrequency,  m_NoiseFrequency))
-            * m_NoiseHeightMultiplier + static_cast<float>(m_NoiseHeightAddition);
-            
-            for (int y = 0; y < CHUNK_HEIGHT; ++y)
+            for (int x = 0; x < CHUNK_WIDTH; ++x)
             {
-                //If we are above the terrain exit early. 
-                if (static_cast<float>(y) > height)
+                for (int y = 0; y < CHUNK_HEIGHT; ++y)
                 {
-                    continue;
-                }
+                    //Ignore if we are above this value
+                    if (y > m_NoiseHeightAddition)
+                    {
+                        continue;
+                    }
 
-                const double cavePerlin = perlin.noise2D_01(PerlinAccumulator * m_OreFrequency, y * m_OreFrequency);
-                if (cavePerlin > m_OreSizeLimit && (static_cast<float>(y) < height - static_cast<float>(m_CaveMinDepth)))
-                {
-                    chunk->m_ChunkData[x][y] = static_cast<int>(TileType::Ore); 
+                    const double OrePerlinNoiseValue = perlin.noise2D_01(PerlinAccumulator * oreSetting.Frequency, y * oreSetting.Frequency);
+                    if (OrePerlinNoiseValue > oreSetting.SizeLimit && y <= oreSetting.MaxGenerationHeight)
+                    {
+                        chunk->m_ChunkData[x][y] = static_cast<int>(oreSetting.TileType); 
+                    }
                 }
-
-                const double cavePerlin2 = perlin.noise2D_01(PerlinAccumulator * m_Seed * m_Ore2Frequency, y * m_Ore2Frequency);
-                if (cavePerlin2 > m_Ore2SizeLimit && (static_cast<float>(y) < m_MaxOre2Height))
-                {
-                    chunk->m_ChunkData[x][y] = static_cast<int>(TileType::Ore2); 
-                }
-
-                const double cavePerlin3 = perlin.noise2D_01(PerlinAccumulator + m_Seed * m_Ore3Frequency, y * m_Ore3Frequency);
-                if (cavePerlin3 > m_Ore3SizeLimit && (static_cast<float>(y) < m_MaxOre3Height))
-                {
-                    chunk->m_ChunkData[x][y] = static_cast<int>(TileType::Ore3); 
-                }
+                PerlinAccumulator++;  
             }
-
-            PerlinAccumulator++;
+            
         }
     }
+
+    //Put back the original seed
+    const siv::PerlinNoise::seed_type seed = m_Seed;
+    perlin.reseed(seed);
 }
 
 void TerrainGenerator::Render() const

@@ -11,9 +11,20 @@ enum class TileType
     Water,
     Bark,
     Leaf,
-    Ore,
-    Ore2,
-    Ore3
+    Copper,
+    Gold,
+    Diamond
+};
+
+struct OreGenerationSettings
+{
+    OreGenerationSettings(const TileType tiletype, const double freq, const double sizelimit, const int maxheight)
+    : TileType(tiletype), Frequency(freq),SizeLimit(sizelimit), MaxGenerationHeight(maxheight){}
+
+    TileType TileType;
+    double Frequency;
+    double SizeLimit;
+    int MaxGenerationHeight;
 };
 
 namespace Terra {class Camera;}
@@ -26,7 +37,7 @@ public:
 
     void StartGeneration();
     void CreateChunks();
-    void GenerateOres() const;
+    void GenerateOres();
     void Render() const;
     bool IsChunkInView(float x) const;
     
@@ -58,17 +69,7 @@ private:
     double m_CaveSizeLimit = 0.25;
 
     bool m_GenerateOres = true;
-    
-    double m_OreFrequency = 0.1;
-    double m_OreSizeLimit = 0.75;
-
-    int m_MaxOre2Height = 30;
-    double m_Ore2Frequency = 0.1;
-    double m_Ore2SizeLimit = 0.8;
-
-    int m_MaxOre3Height = 20;
-    double m_Ore3Frequency = 0.1;
-    double m_Ore3SizeLimit = 0.85;
+    std::vector<OreGenerationSettings> m_OreGenerationSettings;
     
     siv::PerlinNoise perlin;
     float m_NoiseHeightMultiplier = 30.f;

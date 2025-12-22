@@ -65,8 +65,8 @@ private:
     int m_CaveMinDepth = 12;
 
     bool m_GenerateCaves = true;
-    double m_CaveFrequency = 0.08;
-    double m_CaveSizeLimit = 0.25;
+    double m_CaveFrequency = 0.07;
+    double m_CaveSizeLimit = 0.715;
 
     bool m_GenerateOres = true;
     std::vector<OreGenerationSettings> m_OreGenerationSettings;

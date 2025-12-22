@@ -91,9 +91,9 @@ void TerrainGenerator::CreateChunks()
                 //Check if we need to generate caves.
                 if (m_GenerateCaves)
                 {
-                    const double cavePerlin = perlin.noise2D_01(PerlinAccumulator * m_CaveFrequency, y * m_CaveFrequency);
-                    const bool ShouldBeEmpty = cavePerlin > m_CaveSizeLimit || (static_cast<float>(y) > height - static_cast<float>(m_CaveMinDepth));
-                    tileType = ShouldBeEmpty ? tileType : TileType::Air;
+                    const double caveNoiseValue = perlin.noise2D_01(PerlinAccumulator * m_CaveFrequency, y * m_CaveFrequency);
+                    const bool ShouldBeEmpty = caveNoiseValue > m_CaveSizeLimit && (static_cast<float>(y) < height - static_cast<float>(m_CaveMinDepth));
+                    tileType = ShouldBeEmpty ? TileType::Air : tileType;
                 }
                 
                 chunk->m_ChunkData[x][y] = static_cast<int>(tileType);  

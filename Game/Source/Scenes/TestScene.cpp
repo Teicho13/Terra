@@ -17,6 +17,8 @@
 #include "Core/Rendering/Renderer.h"
 #include "Core/FileIO.h"
 
+#include "../WorldObjects/Characters/Player.h"
+
 
 TestScene::TestScene()
     : m_AnimatedSpriteTest(Terra::FileIO::GetEngineFile("Textures\\ExampleSpriteSheet.png"),3)
@@ -38,7 +40,9 @@ TestScene::TestScene()
     const int ChunkPerScreen = Terra::Application::GetApplication()->GetWindowBuffer().x / (TerrainGenerator::CHUNK_WIDTH * tileSize);
     m_CameraManager.SetCameraLimits(0,((m_TerrainGenerator.GetChunks().size() - ChunkPerScreen) * TerrainGenerator::CHUNK_WIDTH) * tileSize,0,TerrainGenerator::CHUNK_HEIGHT * tileSize);
     m_CameraManager.GetCamera().SetPosition({0,(TerrainGenerator::CHUNK_HEIGHT / 2) * tileSize,0});
-    //m_CameraManager.GetCamera().SetZoomLevel(1.5f);
+
+    m_Player = std::make_unique<Player>(Terra::FileIO::GetGameFile("Characters\\Player.png"));
+    m_Player->GetSprite().SetPosition(m_TerrainGenerator.GetPlayerStartingPosition());
 }
 
 TestScene::~TestScene()
@@ -61,7 +65,7 @@ void TestScene::Render()
     //m_TestMap.DrawMap();
     //m_AnimatedSpriteTest.Draw();
     m_TerrainGenerator.Render();
-
+    m_Player->Draw();
 
     //Draw all gathered indices.
     Terra::Renderer::Flush();

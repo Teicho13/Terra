@@ -6,6 +6,7 @@
 #include "Core/Scene.h"
 
 
+class Player;
 class TestScene : public Terra::Scene
 {
 public:
@@ -24,4 +25,5 @@ private:
     Terra::AnimatedSprite m_AnimatedSpriteTest;
     Map m_TestMap;
     TerrainGenerator m_TerrainGenerator;
+    std::unique_ptr<Player> m_Player = nullptr;
 };

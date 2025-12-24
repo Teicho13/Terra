@@ -11,7 +11,11 @@ namespace Terra
 {
     Sprite::Sprite(const std::string& texturePath)
         : m_Texture(ResourceManager::GetInstance().GetTexture(texturePath)), m_Transform(glm::mat4(1.f))
-    {}
+    {
+        //Set default size based off texture size.
+        const auto texture = m_Texture.get();
+        SetScale({texture->GetWidth(),texture->GetHeight(),0.f});
+    }
 
     Sprite::~Sprite()
     {

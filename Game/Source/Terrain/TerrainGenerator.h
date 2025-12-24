@@ -1,5 +1,7 @@
 #pragma once
 #include <PerlinNoise.hpp>
+#include <vec3.hpp>
+
 #include "Core/Rendering/Texture.h"
 
 enum class TileType
@@ -44,6 +46,8 @@ public:
     Terra::Texture* GetTextureRef() const;
     Terra::Camera* GetCameraRef() const;
     std::vector<std::unique_ptr<Chunk>>& GetChunks();
+
+    glm::vec3 GetPlayerStartingPosition() const;
 
     void SetTerrainTexture(const std::string& TerrainTexturePath);
     void SetActiveCamera(Terra::Camera* camera);

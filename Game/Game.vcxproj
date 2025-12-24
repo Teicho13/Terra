@@ -254,6 +254,7 @@ xcopy /E  /Y "$(ProjectDir)Assets" "$(OutDir)Assets\$(ProjectName)"</Command>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Source\Terrain\TerrainGenerator.cpp" />
+    <ClCompile Include="Source\WorldObjects\Characters\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\CameraManager.h" />
@@ -262,6 +263,7 @@ xcopy /E  /Y "$(ProjectDir)Assets" "$(OutDir)Assets\$(ProjectName)"</Command>
     <ClInclude Include="Source\Scenes\TestScene.h" />
     <ClInclude Include="Source\Terrain\Chunk.h" />
     <ClInclude Include="Source\Terrain\TerrainGenerator.h" />
+    <ClInclude Include="Source\WorldObjects\Characters\Player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -182,6 +182,21 @@ std::vector<std::unique_ptr<Chunk>>& TerrainGenerator::GetChunks()
     return m_Chunks;
 }
 
+glm::vec3 TerrainGenerator::GetPlayerStartingPosition() const
+{
+    constexpr float startX = 2.f * TILE_SIZE;
+    float startY = 0.f;
+    for (int y = 0; y < CHUNK_HEIGHT; ++y)
+    {
+        if (m_Chunks[0]->m_ChunkData[2][y] == static_cast<int>(TileType::Grass))
+        {
+            startY = static_cast<float>((y + 1) * TILE_SIZE);
+        }
+    }
+    
+    return {startX, startY, 0.f};
+}
+
 void TerrainGenerator::SetTerrainTexture(const std::string& TerrainTexturePath)
 {
     m_Texture.reset();

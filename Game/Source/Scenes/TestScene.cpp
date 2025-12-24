@@ -43,6 +43,7 @@ TestScene::TestScene()
 
     m_Player = std::make_unique<Player>(Terra::FileIO::GetGameFile("Characters\\Player.png"));
     m_Player->GetSprite().SetPosition(m_TerrainGenerator.GetPlayerStartingPosition());
+    m_Player->SetTerrainGeneratorRef(&m_TerrainGenerator);
 }
 
 TestScene::~TestScene()
@@ -53,6 +54,7 @@ TestScene::~TestScene()
 void TestScene::Update(float DeltaTime)
 {
     m_CameraManager.Update(DeltaTime);
+    m_Player->Update(DeltaTime);
     
     m_AnimatedSpriteTest.Update(DeltaTime);
     m_AnimatedSpriteTest.SetScale(glm::vec3(32.f,32.f,1.f));
@@ -100,6 +102,14 @@ void TestScene::OnInputPressed(int key, int scancode, int mods)
     {
         float zoom = m_CameraManager.GetCamera().GetZoomLevel();
         m_CameraManager.GetCamera().SetZoomLevel(zoom + 0.1f);
+    }
+
+    if (key == GLFW_KEY_SPACE)
+    {
+        if (m_Player)
+        {
+            m_Player->Jump();
+        }
     }
 }
 

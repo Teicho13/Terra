@@ -10,9 +10,20 @@ A custom framework and application to learn about the basics of graphics program
 ## :movie_camera: Showcase
 ![Terra Example Showcase video](https://www.tychocharko.com/projects/Personal/Terra/images/TerraShowcase.gif)
 
-![Terra Terrain Generation Showcase](https://www.tychocharko.com/projects/Personal/Terra/images/TerraGenerationShowcase.gif)
+*Testing static and animated quads*
+<br><br><br>
+
+![Terrain Generation Showcase](https://www.tychocharko.com/projects/Personal/Terra/images/TerraGenerationShowcase.gif)
+
+*Terrain generation using perlin noise*
 
 ## :video_game: Controls
+
+### Player
+#### Movement
+* Move Left     (LEFT_KEY)
+* Move Right    (RIGHT_KEY)
+* Jump          (SPACE_KEY)
 
 ### Camera
 #### Movement

@@ -21,8 +21,8 @@ A custom framework and application to learn about the basics of graphics program
 
 ### Player
 #### Movement
-* Move Left     (LEFT_KEY)
-* Move Right    (RIGHT_KEY)
+* Move Left     (A_KEY)
+* Move Right    (D_KEY)
 * Jump          (SPACE_KEY)
 
 ### Camera

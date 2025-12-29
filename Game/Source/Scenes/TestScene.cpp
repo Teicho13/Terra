@@ -83,6 +83,8 @@ void TestScene::Render()
     ImGui::Text("Quads: %d", Terra::RenderStats::s_DrawnQuads);
     ImGui::Text("Textures used: %d", Terra::RenderStats::s_DrawnTextures);
     ImGui::Text("Draw Calls: %d", Terra::RenderStats::s_DrawCalls);
+    ImGui::Text("Player Position: %.2f %.2f", m_Player->GetSprite().GetPosition().x,m_Player->GetSprite().GetPosition().y);
+    ImGui::Text("Player velocity: %.2f %.2f", m_Player->GetVelocity().x,m_Player->GetVelocity().y);
     ImGui::End();
 
     ImGui::Render();

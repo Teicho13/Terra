@@ -8,24 +8,26 @@ public:
     Player(const std::string& SpriteTexturePath);
     ~Player() = default;
 
-    void SetTerrainGeneratorRef(TerrainGenerator* terrainGeneratorRef);
-    
-    void Jump();
-    
     void Update(float dt);
     void Draw();
+
+    void SetTerrainGeneratorRef(TerrainGenerator* terrainGeneratorRef);
+    void Jump();
+
+    glm::vec2 GetVelocity() const;
     Terra::Sprite& GetSprite();
-    
+
 private:
-    void CollisionCheck();
     void Move(float dt);
     void ProccessInput(float dt);
     
-    float m_MovementSpeed = 300.f;
+    bool CollisionCheck(const glm::vec2& position) const;
+    
     float m_Acceleration = 5.f;
     float m_MaxSpeed = 300.f;
-    glm::vec2 m_Velocity;
     float m_JumpForce = 300.f;
+    glm::vec2 m_Velocity;
+    
     float m_Gravity = -1000.f;
     bool m_IsGrounded = true;
     

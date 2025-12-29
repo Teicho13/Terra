@@ -1,5 +1,6 @@
 #pragma once
 #include <PerlinNoise.hpp>
+#include <vec2.hpp>
 #include <vec3.hpp>
 
 #include "Core/Rendering/Texture.h"
@@ -47,6 +48,8 @@ public:
     Terra::Camera* GetCameraRef() const;
     std::vector<std::unique_ptr<Chunk>>& GetChunks();
 
+    static void GetTileInfo(const glm::vec2& position, int& chunkID, int& column, int& row);
+    static bool IsTileValid(int chunkID, int column, int row);
     glm::vec3 GetPlayerStartingPosition() const;
 
     void SetTerrainTexture(const std::string& TerrainTexturePath);

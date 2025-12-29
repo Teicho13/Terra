@@ -1,7 +1,6 @@
 #include "Player.h"
 
 #include <algorithm>
-#include <iostream>
 
 #include "../../Terrain/Chunk.h"
 #include "../../Terrain/TerrainGenerator.h"
@@ -28,11 +27,15 @@ void Player::Jump()
    
 }
 
+glm::vec2 Player::GetVelocity() const
+{
+    return m_Velocity;
+}
+
 void Player::Update(const float dt)
 {
     ProccessInput(dt);
     Move(dt);
-    CollisionCheck();
 }
 
 void Player::Draw()
@@ -45,40 +48,39 @@ Terra::Sprite& Player::GetSprite()
     return m_Sprite;
 }
 
-void Player::CollisionCheck()
+bool Player::CollisionCheck(const glm::vec2& position) const
 {
-    if (!m_TerrainGenRef) return;
+    if (!m_TerrainGenRef) return false;
     
-    const auto position = m_Sprite.GetPosition();
-    const int CurrentChunk = static_cast<int>(position.x / (TerrainGenerator::CHUNK_WIDTH * TerrainGenerator::TILE_SIZE));
+    const glm::vec2 size = m_Sprite.GetScale();
 
-    const int TilePositionX = static_cast<int>(position.x) % (TerrainGenerator::CHUNK_WIDTH * TerrainGenerator::TILE_SIZE);
-    const int TilePositionY = static_cast<int>(position.y) % (TerrainGenerator::CHUNK_HEIGHT * TerrainGenerator::TILE_SIZE);
+    //All corners of the sprite
+    std::array<glm::vec2, 4> positions;
+    positions[0] = glm::vec2(position.x,position.y);
+    positions[1] = glm::vec2(position.x+size.x,position.y);
+    positions[2] = glm::vec2(position.x+size.x,position.y+size.y);
+    positions[3] = glm::vec2(position.x,position.y+size.y);
+
+    //If any of the positions are invalid or are not air we collided with something.
+    for (int i = 0; i < 4; ++i)
+    {
+        int chunk,x,y;
+        TerrainGenerator::GetTileInfo(positions[i],chunk,x,y);
+        
+        if (TerrainGenerator::IsTileValid(chunk,x,y))
+        {
+            if (m_TerrainGenRef->GetChunks()[chunk]->m_ChunkData[x][y] != static_cast<int>(TileType::Air))
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return true;
+        }
+    }
     
-
-    int TileIndexX = TilePositionX / TerrainGenerator::TILE_SIZE;
-    int TileIndexY = TilePositionY / TerrainGenerator::TILE_SIZE;
-
-    //Exit out if invalid Index.
-    if (TileIndexX < 0 || TileIndexX > TerrainGenerator::CHUNK_WIDTH - 1 || TileIndexY < 0 || TileIndexY > TerrainGenerator::CHUNK_HEIGHT - 1)
-    {
-        return;
-    }
-
-    const int TileValue = m_TerrainGenRef->GetChunks()[CurrentChunk]->m_ChunkData[TileIndexX][TileIndexY];
-
-    if (TileValue == static_cast<int>(TileType::Grass))
-    {
-        m_IsGrounded = true;
-        auto oldPosition = m_Sprite.GetPosition();
-        oldPosition.y = static_cast<float>(TilePositionY);
-        m_Sprite.SetPosition(oldPosition);
-    }
-
-    if (TileValue == static_cast<int>(TileType::Air))
-    {
-        m_IsGrounded = false;
-    }
+    return false;
 }
 
 void Player::Move(float dt)
@@ -87,17 +89,35 @@ void Player::Move(float dt)
     {
         auto oldPosition = m_Sprite.GetPosition();
         oldPosition.x += m_Velocity.x * dt;
-        m_Sprite.SetPosition(oldPosition);
+        if (!CollisionCheck(oldPosition))
+        {
+            m_Sprite.SetPosition(oldPosition); 
+        }
+        else
+        {
+            m_Velocity.x = 0.f;
+        }
     }
 
-    if (!m_IsGrounded)
+    m_Velocity.y += m_Gravity * dt;
+    auto oldPosition = m_Sprite.GetPosition();
+    oldPosition.y += m_Velocity.y * dt;
+    if (!CollisionCheck(oldPosition))
     {
-        m_Velocity.y += m_Gravity * dt;
-        auto oldPosition = m_Sprite.GetPosition();
-        oldPosition.y += m_Velocity.y * dt;
-        m_Sprite.SetPosition(oldPosition);
+        m_Sprite.SetPosition(oldPosition); 
     }
-    
+    else
+    {
+        m_Velocity.y = 0.f;
+        m_IsGrounded = true;
+    }
+
+    //Check so that we wont go out of bounds
+    if (m_Sprite.GetPosition().x <= 0.f)
+    {
+        m_Sprite.SetPosition({0,m_Sprite.GetPosition().y,m_Sprite.GetPosition().z});
+        m_Velocity.x = 0.f;
+    }
 }
 
 void Player::ProccessInput(float dt)
@@ -129,6 +149,6 @@ void Player::ProccessInput(float dt)
             m_Velocity.x = std::max(m_Velocity.x, 0.f);
         }
     }
-
+    
     m_Velocity.x = std::clamp(m_Velocity.x, -m_MaxSpeed, m_MaxSpeed);
 }

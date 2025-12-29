@@ -182,6 +182,39 @@ std::vector<std::unique_ptr<Chunk>>& TerrainGenerator::GetChunks()
     return m_Chunks;
 }
 
+void TerrainGenerator::GetTileInfo(const glm::vec2& position, int& chunkID, int& column, int& row)
+{
+    const int CurrentChunk = static_cast<int>(position.x / (CHUNK_WIDTH * TILE_SIZE));
+
+    const int TilePositionX = static_cast<int>(position.x) % (CHUNK_WIDTH * TILE_SIZE);
+    const int TilePositionY = static_cast<int>(position.y) % (CHUNK_HEIGHT * TILE_SIZE);
+    
+    int TileIndexX = TilePositionX / TILE_SIZE;
+    int TileIndexY = TilePositionY / TILE_SIZE;
+
+    //Exit out if invalid Index.
+    if (TileIndexX < 0 || TileIndexX > CHUNK_WIDTH - 1 || TileIndexY < 0 || TileIndexY > CHUNK_HEIGHT - 1)
+    {
+        chunkID = column = row = - 1;
+        return;
+    }
+
+    chunkID = CurrentChunk;
+    column = TileIndexX;
+    row = TileIndexY;
+}
+
+bool TerrainGenerator::IsTileValid(int chunkID, int column, int row)
+{
+    constexpr int chunkAmount = m_WorldSize / CHUNK_WIDTH;
+    if (column < 0 || column > CHUNK_WIDTH - 1 || row < 0 || row > CHUNK_HEIGHT - 1 || chunkID < 0 || chunkID > chunkAmount - 1)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 glm::vec3 TerrainGenerator::GetPlayerStartingPosition() const
 {
     constexpr float startX = 2.f * TILE_SIZE;

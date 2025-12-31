@@ -1,7 +1,10 @@
 #pragma once
 #include "Core/Sprite.h"
+#include "Core/Rendering/Camera.h"
 
 class TerrainGenerator;
+
+class CameraManager;
 class Player
 {
 public:
@@ -12,7 +15,9 @@ public:
     void Draw();
 
     void SetTerrainGeneratorRef(TerrainGenerator* terrainGeneratorRef);
+    void SetCameraManagerRef(CameraManager* cameraRef);
     void Jump();
+    void Clicked(float clickedX, float clickedY) const;
 
     glm::vec2 GetVelocity() const;
     Terra::Sprite& GetSprite();
@@ -33,4 +38,5 @@ private:
     
     Terra::Sprite m_Sprite;
     TerrainGenerator* m_TerrainGenRef = nullptr;
+    CameraManager* m_CameraRef = nullptr;
 };

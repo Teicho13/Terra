@@ -69,16 +69,18 @@ namespace Terra
 
     static void GLFWMouseButtonCallback(GLFWwindow* window, const int button, const int action, const int mods)
     {
+        double xpos, ypos;
+        glfwGetCursorPos(window,&xpos,&ypos);
         for (const std::unique_ptr<Scene>& CurrentScene : Application::GetApplication()->GetScenes())
         {
             if (action == GLFW_PRESS)
             {
-               CurrentScene->OnMouseClicked(button, mods);
+               CurrentScene->OnMouseClicked(button, mods,static_cast<float>(xpos),static_cast<float>(ypos));
             }
 
             if (action == GLFW_RELEASE)
             {
-               CurrentScene->OnMouseReleased(button, mods);
+               CurrentScene->OnMouseReleased(button, mods,static_cast<float>(xpos),static_cast<float>(ypos));
             }
         }
         

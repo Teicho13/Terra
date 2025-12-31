@@ -18,6 +18,7 @@ void CameraManager::Update(float deltaTime)
 
 void CameraManager::Resize(const float width, const float height)
 {
+    m_CameraSize = { width, height };
     m_Camera.SetProjectionMatrix(0 * m_Zoom,width * m_Zoom,0,height * m_Zoom);
 }
 
@@ -54,6 +55,16 @@ void CameraManager::SetCameraPosition(float x, float y, float z)
 Terra::Camera& CameraManager::GetCamera()
 {
     return m_Camera;
+}
+
+glm::vec3 CameraManager::GetCameraPosition() const
+{
+    return m_CameraPosition;
+}
+
+glm::vec2 CameraManager::GetCameraSize() const
+{
+    return m_CameraSize;
 }
 
 

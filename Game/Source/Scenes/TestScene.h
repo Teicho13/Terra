@@ -21,6 +21,7 @@ public:
     void OnInputHeld(int key, int scancode, int mods) override {}
     void OnScreenResize(float width, float height) override;
     void OnMouseScroll(double offsetX, double offsetY) override;
+    void OnMouseClicked(int button, int mods, float posX, float posY) override;
 
 private:
     CameraManager m_CameraManager;

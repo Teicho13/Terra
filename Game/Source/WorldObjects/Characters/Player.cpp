@@ -1,7 +1,9 @@
 #include "Player.h"
 
 #include <algorithm>
+#include <iostream>
 
+#include "../../CameraManager.h"
 #include "../../Terrain/Chunk.h"
 #include "../../Terrain/TerrainGenerator.h"
 #include "Core/Application.h"
@@ -17,6 +19,11 @@ void Player::SetTerrainGeneratorRef(TerrainGenerator* terrainGeneratorRef)
     m_TerrainGenRef = terrainGeneratorRef;
 }
 
+void Player::SetCameraManagerRef(CameraManager* cameraRef)
+{
+    m_CameraRef = cameraRef;
+}
+
 void Player::Jump()
 {
     if (m_IsGrounded)
@@ -25,6 +32,24 @@ void Player::Jump()
         m_IsGrounded = false; 
     }
    
+}
+
+void Player::Clicked(const float clickedX, const float clickedY) const
+{
+    //First we get the tile we clicked on.
+    if (!m_TerrainGenRef || !m_CameraRef) return;
+    
+    //Offset our click position with the camera
+    
+    const float clickPositionX = clickedX + m_CameraRef->GetCameraPosition().x;
+    const float clickPositionY = (m_CameraRef->GetCameraSize().y - clickedY) + m_CameraRef->GetCameraPosition().y;
+    //Get the Clicked Tile.
+    
+    int chunk,x,y;
+    TerrainGenerator::GetTileInfo({clickPositionX,clickPositionY},chunk,x,y);
+    if (chunk == -1 || x == -1 || y == -1) return;
+    
+    m_TerrainGenRef->GetChunks()[chunk]->m_ChunkData[x][y] = static_cast<int>(TileType::Air);
 }
 
 glm::vec2 Player::GetVelocity() const

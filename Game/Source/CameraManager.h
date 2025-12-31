@@ -13,6 +13,8 @@ public:
     void SetCameraPosition(float x, float y, float z);
     
     Terra::Camera& GetCamera();
+    glm::vec3 GetCameraPosition() const;
+    glm::vec2 GetCameraSize() const;
     
     float GetZoomLevel() const;
     void SetZoomLevel(float value);

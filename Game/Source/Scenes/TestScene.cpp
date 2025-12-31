@@ -45,6 +45,7 @@ TestScene::TestScene()
     m_Player = std::make_unique<Player>(Terra::FileIO::GetGameFile("Characters\\Player.png"));
     m_Player->GetSprite().SetPosition(m_TerrainGenerator.GetPlayerStartingPosition());
     m_Player->SetTerrainGeneratorRef(&m_TerrainGenerator);
+    m_Player->SetCameraManagerRef(&m_CameraManager);
 }
 
 TestScene::~TestScene()
@@ -132,4 +133,12 @@ void TestScene::OnScreenResize(float width, float height)
 void TestScene::OnMouseScroll(double offsetX, double offsetY)
 {
     m_CameraManager.OnScroll(static_cast<float>(offsetY));
+}
+
+void TestScene::OnMouseClicked(int button, int mods, const float posX, const float posY )
+{
+    if (m_Player)
+    {
+        m_Player->Clicked(posX, posY);
+    }
 }

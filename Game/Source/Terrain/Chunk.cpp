@@ -63,9 +63,9 @@ bool Chunk::IsTileInView(float x, float y) const
 
     const auto cameraPos = m_TerrainGeneratorRef->GetCameraRef()->GetPosition();
     return ((x >= 0 + cameraPos.x || x + static_cast<float>(TerrainGenerator::TILE_SIZE) >= 0 + cameraPos.x) &&
-               (x <= Terra::Application::GetApplication()->GetWindowBuffer().x * m_TerrainGeneratorRef->GetCameraRef()->GetZoomLevel() + cameraPos.x) &&
+               (x <= Terra::Application::GetApplication()->GetWindowBuffer().x * m_TerrainGeneratorRef->GetCameraRef()->GetZoom() + cameraPos.x) &&
                (y >= 0 + cameraPos.y || y + static_cast<float>(TerrainGenerator::TILE_SIZE) >= 0 + cameraPos.y) &&
-               (y <= Terra::Application::GetApplication()->GetWindowBuffer().y * m_TerrainGeneratorRef->GetCameraRef()->GetZoomLevel() + cameraPos.y));
+               (y <= Terra::Application::GetApplication()->GetWindowBuffer().y * m_TerrainGeneratorRef->GetCameraRef()->GetZoom() + cameraPos.y));
 }
 
 glm::vec2 Chunk::getPosition() const

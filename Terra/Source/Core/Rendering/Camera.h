@@ -7,31 +7,31 @@ namespace Terra
     class Camera
     {
     public:
-        Camera();
-        void SetPosition(const glm::vec3& position) {m_Position = position; UpdateViewMatrix();}
-        void SetRotation(const float rotation) { m_Rotation = rotation; UpdateViewMatrix(); }
-        void SetZoomLevel(const float zoomLevel) { m_ZoomLevel = std::max(zoomLevel, 0.1f); UpdateViewMatrix(); }
-        
-        const glm::vec3& GetPosition() const { return m_Position; }
-        float GetRotation() const { return m_Rotation; }
-        float GetZoomLevel() const { return m_ZoomLevel; }
+        Camera(float left, float right, float bottom, float top);
+        void SetProjectionMatrix(float left, float right, float bottom, float top);
 
-        const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
-        const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
-        const glm::mat4& GetProjectionViewMatrix() const { return m_ProjectionViewMatrix; }
+        void SetPosition(const glm::vec3& position);
+        void SetRotation(float rotation);
+        void SetZoom(float zoom);
+        
+        glm::vec3 GetPosition() const;
+        float GetRotation() const;
+        float GetZoom() const;
+        
+        glm::mat4 GetViewMatrix() const;
+        glm::mat4 GetProjectionMatrix() const;
+        glm::mat4 GetProjectionViewMatrix() const;
+    private:
 
+        void RecalculateViewMatrix();
         
-    protected:
+        glm::mat4 m_ProjectionMatrix;
+        glm::mat4 m_ViewMatrix;
+        glm::mat4 m_ProjectionViewMatrix;
 
-        void UpdateViewMatrix();
-        
-        glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f);
-        glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
-        glm::mat4 m_ProjectionViewMatrix = glm::mat4(1.0f);
-        
-        glm::vec3 m_Position {0.0f,0.0f,0.0f};
+        glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
         float m_Rotation = 0.0f;
-        float m_ZoomLevel = 1.0f;
+        float m_Zoom = 1.0f;
     }; 
 }
 

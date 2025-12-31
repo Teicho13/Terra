@@ -6,6 +6,7 @@
 #include <imgui_impl_opengl3.h>
 
 PerlinVisualizerScene::PerlinVisualizerScene()
+    :m_CameraManager(1280.0f,720.0f)
 {
     const siv::PerlinNoise::seed_type seed = 1234u; /*<-- Use for testing same seed*/
     perlin.reseed(seed);

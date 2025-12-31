@@ -35,5 +35,5 @@ A custom framework and application to learn about the basics of graphics program
 * Move backwards (CTRL + DOWN_KEY)
 
 #### Zoom
-* Zoom in       (EQUALS_KEY)
-* Zoom out      (MINUS_KEY)
+* Zoom in       (EQUALS_KEY OR SCROLL_UP)
+* Zoom out      (MINUS_KEY OR SCROLL_DOWN)

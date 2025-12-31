@@ -164,7 +164,7 @@ bool TerrainGenerator::IsChunkInView(const float x) const
 
     const auto camPos = GetCameraRef()->GetPosition();
     return ((x >= 0 + camPos.x || x + static_cast<float>(CHUNK_WIDTH * TILE_SIZE) >= 0 + camPos.x) &&
-            (x <= Terra::Application::GetApplication()->GetWindowBuffer().x * GetCameraRef()->GetZoomLevel() + camPos.x));
+            (x <= Terra::Application::GetApplication()->GetWindowBuffer().x * GetCameraRef()->GetZoom() + camPos.x));
 }
 
 Terra::Texture* TerrainGenerator::GetTextureRef() const

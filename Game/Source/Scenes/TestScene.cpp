@@ -21,7 +21,7 @@
 
 
 TestScene::TestScene()
-    : m_AnimatedSpriteTest(Terra::FileIO::GetEngineFile("Textures\\ExampleSpriteSheet.png"),3)
+    : m_CameraManager(1280.0f,720.0f), m_AnimatedSpriteTest(Terra::FileIO::GetEngineFile("Textures\\ExampleSpriteSheet.png"),3)
 {
     m_AnimatedSpriteTest.GetAnimation().SetLooped(true);
     m_AnimatedSpriteTest.GetAnimation().SetFrameSpeed(5.f);
@@ -38,8 +38,9 @@ TestScene::TestScene()
 
     constexpr auto tileSize = TerrainGenerator::TILE_SIZE;
     const int ChunkPerScreen = Terra::Application::GetApplication()->GetWindowBuffer().x / (TerrainGenerator::CHUNK_WIDTH * tileSize);
-    m_CameraManager.SetCameraLimits(0,((m_TerrainGenerator.GetChunks().size() - ChunkPerScreen) * TerrainGenerator::CHUNK_WIDTH) * tileSize,0,TerrainGenerator::CHUNK_HEIGHT * tileSize);
-    m_CameraManager.GetCamera().SetPosition({0,(TerrainGenerator::CHUNK_HEIGHT / 2) * tileSize,0});
+    m_CameraManager.SetCameraMovementIsLimited(true);
+    m_CameraManager.SetCameraMovementLimits(0,((m_TerrainGenerator.GetChunks().size() - ChunkPerScreen) * TerrainGenerator::CHUNK_WIDTH) * tileSize,0,TerrainGenerator::CHUNK_HEIGHT * tileSize);
+    m_CameraManager.SetCameraPosition(0.0f,(TerrainGenerator::CHUNK_HEIGHT / 2) * tileSize,0.0f);
 
     m_Player = std::make_unique<Player>(Terra::FileIO::GetGameFile("Characters\\Player.png"));
     m_Player->GetSprite().SetPosition(m_TerrainGenerator.GetPlayerStartingPosition());
@@ -78,8 +79,8 @@ void TestScene::Render()
 
     ImGui::Begin("Window");
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-    ImGui::Text("Camera Position: X: %.2f Y: %.2f Z: %.2f", m_CameraManager.GetPosition().x,m_CameraManager.GetPosition().y,m_CameraManager.GetPosition().z);
-    ImGui::Text("Camera ZoomLevel: %.2f", m_CameraManager.GetCamera().GetZoomLevel());
+    ImGui::Text("Camera Position: X: %.2f Y: %.2f Z: %.2f", m_CameraManager.GetCamera().GetPosition().x,m_CameraManager.GetCamera().GetPosition().y,m_CameraManager.GetCamera().GetPosition().z);
+    ImGui::Text("Camera ZoomLevel: %.2f", m_CameraManager.GetZoomLevel());
     ImGui::Text("Quads: %d", Terra::RenderStats::s_DrawnQuads);
     ImGui::Text("Textures used: %d", Terra::RenderStats::s_DrawnTextures);
     ImGui::Text("Draw Calls: %d", Terra::RenderStats::s_DrawCalls);
@@ -96,14 +97,14 @@ void TestScene::OnInputPressed(int key, int scancode, int mods)
     
     if (key == GLFW_KEY_EQUAL)
     {
-        float zoom = m_CameraManager.GetCamera().GetZoomLevel();
-        m_CameraManager.GetCamera().SetZoomLevel(zoom - 0.1f);
+        float zoom = m_CameraManager.GetZoomLevel();
+        m_CameraManager.SetZoomLevel(zoom - 0.1f);
     }
 
     if (key == GLFW_KEY_MINUS)
     {
-        float zoom = m_CameraManager.GetCamera().GetZoomLevel();
-        m_CameraManager.GetCamera().SetZoomLevel(zoom + 0.1f);
+        float zoom = m_CameraManager.GetZoomLevel();
+        m_CameraManager.SetZoomLevel(zoom + 0.1f);
     }
 
     if (key == GLFW_KEY_SPACE)
@@ -121,4 +122,14 @@ void TestScene::OnInputReleased(int key, int scancode, int mods)
     {
         Terra::Application::GetApplication()->RequestEnd();
     }
+}
+
+void TestScene::OnScreenResize(float width, float height)
+{
+    m_CameraManager.Resize(width, height);
+}
+
+void TestScene::OnMouseScroll(double offsetX, double offsetY)
+{
+    m_CameraManager.OnScroll(static_cast<float>(offsetY));
 }

@@ -22,10 +22,24 @@ namespace Terra
         std::cerr << "GLFW Error: " << description << "\n";
     }
 
+    static void GLFWMouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+    {
+        for (const std::unique_ptr<Scene>& CurrentScene : Application::GetApplication()->GetScenes())
+        {
+            CurrentScene->OnMouseScroll(xoffset, yoffset);
+        }
+    }
+
     static void GLFWWindowResizeCallback(GLFWwindow* window, const GLsizei width, const GLsizei height)
     {
         //Make sure we have the correct window size.
         glViewport(0, 0, width, height);
+
+        if (!Application::GetApplication()->GetScenes().empty())
+        {
+            const auto& currentScene = Application::GetApplication()->GetScenes()[0];
+            currentScene->OnScreenResize(static_cast<float>(width), static_cast<float>(height));
+        }
     }
 
     static void GLFWKeyCallback(GLFWwindow* window, const int key, const int scancode, const int action, const int mods)
@@ -89,6 +103,7 @@ namespace Terra
         glfwSetWindowSizeCallback(m_Window->GetWindow(), GLFWWindowResizeCallback);
         glfwSetKeyCallback(m_Window->GetWindow(), GLFWKeyCallback);
         glfwSetMouseButtonCallback(m_Window->GetWindow(), GLFWMouseButtonCallback);
+        glfwSetScrollCallback(m_Window->GetWindow(), GLFWMouseScrollCallback);
 
         Renderer::Initialize();
 

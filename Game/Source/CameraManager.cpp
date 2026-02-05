@@ -6,7 +6,7 @@
 #include "Core/Application.h"
 
 CameraManager::CameraManager(const float width, const float height)
-    :m_Camera(0 * m_Zoom,width * m_Zoom,0,height * m_Zoom)
+    :m_Camera(0 * m_Zoom,width * m_Zoom,0,height * m_Zoom), m_CameraSize(width, height)
 {
 }
 
@@ -65,6 +65,17 @@ glm::vec3 CameraManager::GetCameraPosition() const
 glm::vec2 CameraManager::GetCameraSize() const
 {
     return m_CameraSize;
+}
+
+glm::vec2 CameraManager::ScreenToWorldPosition(const float screenX, const float screenY) const
+{
+    const float x = (screenX / m_CameraSize.x) * 2.0f - 1.0f;
+    const float y = 1.0f - (screenY / m_CameraSize.y) * 2.0f;
+
+    const glm::vec4 clippingCoordinate = glm::vec4(x, y, 0.0f, 1.0f);
+    const glm::mat4 inversePVM = glm::inverse(m_Camera.GetProjectionViewMatrix());
+    const glm::vec4 worldPosition = inversePVM * clippingCoordinate;
+    return glm::vec2 { worldPosition };
 }
 
 

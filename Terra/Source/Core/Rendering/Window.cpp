@@ -67,4 +67,9 @@ namespace Terra
     {
         return glfwWindowShouldClose(m_Window) != 0;
     }
+
+    WindowSpecs Window::GetWindowSpecs() const
+    {
+        return m_WindowSpecs;
+    }
 }

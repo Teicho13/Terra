@@ -29,7 +29,7 @@ namespace Terra
         GLFWwindow* GetWindow() const;
         glm::vec2 GetWindowBuffer() const;
         bool ShouldClose() const;
-
+        WindowSpecs GetWindowSpecs() const;
     private:
         GLFWwindow* m_Window = nullptr;
         WindowSpecs m_WindowSpecs;

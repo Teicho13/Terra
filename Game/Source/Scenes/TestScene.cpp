@@ -12,16 +12,19 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include <iostream>
 
 #include "Core/Rendering/Renderer.h"
 #include "Core/FileIO.h"
 
 #include "../WorldObjects/Characters/Player.h"
 
+static Terra::WindowSpecs GetWindowSpecs()
+{
+    return Terra::Application::GetApplication()->GetWindow()->GetWindowSpecs();
+}
 
 TestScene::TestScene()
-    : m_CameraManager(1280.0f,720.0f), m_AnimatedSpriteTest(Terra::FileIO::GetEngineFile("Textures\\ExampleSpriteSheet.png"),3)
+    : m_CameraManager(static_cast<float>(GetWindowSpecs().width),static_cast<float>(GetWindowSpecs().height)), m_AnimatedSpriteTest(Terra::FileIO::GetEngineFile("Textures\\ExampleSpriteSheet.png"),3)
 {
     m_AnimatedSpriteTest.GetAnimation().SetLooped(true);
     m_AnimatedSpriteTest.GetAnimation().SetFrameSpeed(5.f);

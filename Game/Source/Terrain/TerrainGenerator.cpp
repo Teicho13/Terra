@@ -75,7 +75,7 @@ void TerrainGenerator::CreateChunks()
                 //If we are above the terrain exit early. 
                 if (static_cast<float>(y) > height)
                 {
-                    chunk->m_ChunkData[x][y] = static_cast<int>(TileType::Air);
+                    chunk->m_ChunkData[x][y].tiletype = TileType::Air;
                     continue;
                 }
 
@@ -96,7 +96,7 @@ void TerrainGenerator::CreateChunks()
                     tileType = ShouldBeEmpty ? TileType::Air : tileType;
                 }
                 
-                chunk->m_ChunkData[x][y] = static_cast<int>(tileType);  
+                chunk->m_ChunkData[x][y].tiletype = tileType;  
             }
 
             PerlinAccumulator++;
@@ -132,7 +132,7 @@ void TerrainGenerator::GenerateOres()
                     const double OrePerlinNoiseValue = perlin.noise2D_01(PerlinAccumulator * oreSetting.Frequency, y * oreSetting.Frequency);
                     if (OrePerlinNoiseValue > oreSetting.SizeLimit && y <= oreSetting.MaxGenerationHeight)
                     {
-                        chunk->m_ChunkData[x][y] = static_cast<int>(oreSetting.TileType); 
+                        chunk->m_ChunkData[x][y].tiletype = oreSetting.TileType; 
                     }
                 }
                 PerlinAccumulator++;  
@@ -221,7 +221,7 @@ glm::vec3 TerrainGenerator::GetPlayerStartingPosition() const
     float startY = 0.f;
     for (int y = 0; y < CHUNK_HEIGHT; ++y)
     {
-        if (m_Chunks[0]->m_ChunkData[2][y] == static_cast<int>(TileType::Grass))
+        if (m_Chunks[0]->m_ChunkData[2][y].tiletype == TileType::Grass)
         {
             startY = static_cast<float>((y + 1) * TILE_SIZE);
         }

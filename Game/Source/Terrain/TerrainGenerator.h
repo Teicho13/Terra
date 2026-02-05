@@ -4,20 +4,7 @@
 #include <vec3.hpp>
 
 #include "Core/Rendering/Texture.h"
-
-enum class TileType
-{
-    Air = 0,
-    Grass,
-    Dirt,
-    Stone,
-    Water,
-    Bark,
-    Leaf,
-    Copper,
-    Gold,
-    Diamond
-};
+#include "Tile.h"
 
 struct OreGenerationSettings
 {

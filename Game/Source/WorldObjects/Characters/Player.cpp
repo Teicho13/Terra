@@ -46,7 +46,7 @@ void Player::Clicked(const float clickedX, const float clickedY) const
     TerrainGenerator::GetTileInfo(worldposition,chunk,x,y);
     if (chunk == -1 || x == -1 || y == -1) return;
     
-    m_TerrainGenRef->GetChunks()[chunk]->m_ChunkData[x][y] = static_cast<int>(TileType::Air);
+    m_TerrainGenRef->GetChunks()[chunk]->m_ChunkData[x][y].tiletype = TileType::Air;
 }
 
 glm::vec2 Player::GetVelocity() const
@@ -91,7 +91,7 @@ bool Player::CollisionCheck(const glm::vec2& position) const
         
         if (TerrainGenerator::IsTileValid(chunk,x,y))
         {
-            if (m_TerrainGenRef->GetChunks()[chunk]->m_ChunkData[x][y] != static_cast<int>(TileType::Air))
+            if (m_TerrainGenRef->GetChunks()[chunk]->m_ChunkData[x][y].tiletype != TileType::Air)
             {
                 return true;
             }

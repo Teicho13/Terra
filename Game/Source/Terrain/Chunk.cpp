@@ -18,11 +18,11 @@ void Chunk::Render(const std::shared_ptr<Terra::Texture>& texture) const
         for (int y = 0; y < TerrainGenerator::CHUNK_HEIGHT; ++y)
         {
             //Check if the tile is within camera view and if not air (since we dont want to draw for air)
-            if (IsTileInView(m_Position.x + static_cast<float>(x) * tilesize, m_Position.y + static_cast<float>(y) * tilesize) && m_ChunkData[x][y] != static_cast<int>(TileType::Air))
+            if (IsTileInView(m_Position.x + static_cast<float>(x) * tilesize, m_Position.y + static_cast<float>(y) * tilesize) && m_ChunkData[x][y].tiletype != TileType::Air)
             {
                 //Get the correct texture coordinate from the texture atlas.
                 
-                auto TextureCoords = GetTextureCoordinates(m_ChunkData[x][y]);
+                auto TextureCoords = GetTextureCoordinates(static_cast<int>(m_ChunkData[x][y].tiletype));
                 Terra::Renderer::DrawQuad({m_Position.x + static_cast<float>(x) * tilesize, m_Position.y + static_cast<float>(y) * tilesize,0.f},{tilesize,tilesize,1.f},texture,TextureCoords.data());
             }
         }

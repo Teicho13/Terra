@@ -29,6 +29,7 @@ public:
     void CreateChunks();
     void GenerateOres();
     void Render() const;
+    void Update(float deltaTime) const;
     bool IsChunkInView(float x) const;
     
     Terra::Texture* GetTextureRef() const;

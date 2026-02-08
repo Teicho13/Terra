@@ -57,7 +57,7 @@ void TerrainGenerator::CreateChunks()
     
     for (int i = 0; i < chunkAmount; ++i)
     {
-        m_Chunks.emplace_back(std::make_unique<Chunk>(glm::vec2(i * (CHUNK_WIDTH * TILE_SIZE),0),this));
+        m_Chunks.emplace_back(std::make_unique<Chunk>(glm::vec2(i * (CHUNK_WIDTH * TILE_SIZE),0),this, i));
         const auto& chunk = m_Chunks.back();
 
         for (int x = 0; x < CHUNK_WIDTH; ++x)
@@ -153,6 +153,17 @@ void TerrainGenerator::Render() const
         if (IsChunkInView(chunk->getPosition().x))
         {
             chunk->Render(m_Texture);
+        }
+    }
+}
+
+void TerrainGenerator::Update(float deltaTime) const
+{
+    for (const auto& chunk : m_Chunks)
+    {
+        if (IsChunkInView(chunk->getPosition().x))
+        {
+            chunk->Update(deltaTime);
         }
     }
 }

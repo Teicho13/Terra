@@ -6,64 +6,46 @@
 #include "Core/Rendering/Renderer.h"
 
 Chunk::Chunk(glm::vec2 position, TerrainGenerator* TGRef, const int id)
-    :m_TerrainGeneratorRef(TGRef), m_Position(position), m_TileID(id)
+    :m_TerrainGeneratorRef(TGRef), m_Position(position), m_ChunkID(id)
 {
     
 }
 
+static constexpr TileBitmaskDirection g_TileBitmaskDirections[] =
+{
+    {.offsetX = 0, .offsetY = 1, .bitmask = 1},
+    {.offsetX = -1, .offsetY = 0, .bitmask = 2},
+    {.offsetX = 1, .offsetY = 0, .bitmask = 4},
+    {.offsetX = 0, .offsetY = -1, .bitmask = 8}
+};
+
 void Chunk::Update(float deltaTime)
 {
-    float tilesize = static_cast<float>(TerrainGenerator::TILE_SIZE);
+    constexpr float tilesize = static_cast<float>(TerrainGenerator::TILE_SIZE);
+    
     for (int x = 0; x < TerrainGenerator::CHUNK_WIDTH; ++x)
     {
         for (int y = 0; y < TerrainGenerator::CHUNK_HEIGHT; ++y)
         {
-            //Check if the tile is within camera view and if not air (since we dont want to draw for air)
-            if (IsTileInView(m_Position.x + static_cast<float>(x) * tilesize, m_Position.y + static_cast<float>(y) * tilesize) && m_ChunkData[x][y].tiletype != TileType::Air)
+            auto& tile = m_ChunkData[x][y];
+
+            //Check if current tile is not air.
+            if (tile.tiletype == TileType::Air) continue;
+            //Check if current tile is within camera view.
+            if (!IsTileInView(m_Position.x + static_cast<float>(x) * tilesize, m_Position.y + static_cast<float>(y) * tilesize)) continue;
+
+            int mask = 0;
+
+            //Loop over all directions and add up the mask for each valid neighbor.
+            for (const auto& direction : g_TileBitmaskDirections)
             {
-                //All directions to check for neighbors and the bit for that direction
-                static constexpr int dirs[4][3] = {{0,1,1}, {-1,0,2}, {1,0,4}, {0,-1,8} };
-
-                int mask = 0;
-
-                for (int i = 0; i < 4; ++i)
+                if (IsTileValidNeighbor(x,y,direction))
                 {
-                    int neighbourX = x + dirs[i][0];
-                    int neighbourY = y + dirs[i][1];
-                    int bit = dirs[i][2];
-
-                    if (neighbourX >= 0 && neighbourX < TerrainGenerator::CHUNK_WIDTH && neighbourY >= 0 && neighbourY < TerrainGenerator::CHUNK_HEIGHT)
-                    {
-                        if (m_ChunkData[neighbourX][neighbourY].tiletype != TileType::Air)
-                        {
-                            mask |= bit;
-                        }
-                    }
-                    else
-                    {
-                        if (neighbourY < 0 || neighbourY >= TerrainGenerator::CHUNK_HEIGHT) continue;
-
-                        if (neighbourX < 0)
-                        {
-                            if (m_TerrainGeneratorRef->IsTileValid((m_TileID - 1),TerrainGenerator::CHUNK_WIDTH - 1 ,neighbourY))
-                            {
-                                mask |= bit;
-                                continue;
-                            }
-                        }
-                        else if (neighbourX >= TerrainGenerator::CHUNK_WIDTH)
-                        {
-                            if (m_TerrainGeneratorRef->IsTileValid(m_TileID + 1, 0 ,neighbourY))
-                            {
-                                mask |= bit;
-                                continue;
-                            }
-                        }
-                    }
+                    mask |= direction.bitmask;
                 }
-
-                m_ChunkData[x][y].tilemask = mask;
             }
+
+            tile.tilemask = mask;
         }
     }
 }
@@ -131,6 +113,34 @@ bool Chunk::IsTileInView(float x, float y) const
                (x <= Terra::Application::GetApplication()->GetWindowBuffer().x * m_TerrainGeneratorRef->GetCameraRef()->GetZoom() + cameraPos.x) &&
                (y >= 0 + cameraPos.y || y + static_cast<float>(TerrainGenerator::TILE_SIZE) >= 0 + cameraPos.y) &&
                (y <= Terra::Application::GetApplication()->GetWindowBuffer().y * m_TerrainGeneratorRef->GetCameraRef()->GetZoom() + cameraPos.y));
+}
+
+bool Chunk::IsTileValidNeighbor(int x, int y, const TileBitmaskDirection& direction) const
+{
+    const int neighbourX = x + direction.offsetX;
+    const int neighbourY = y + direction.offsetY;
+
+    //vertically out of bounds
+    if (neighbourY < 0 || neighbourY >= TerrainGenerator::CHUNK_HEIGHT) return false;
+    //Neighbor is inside the same chunk
+    if (neighbourX >= 0 && neighbourX < TerrainGenerator::CHUNK_WIDTH) return m_ChunkData[neighbourX][neighbourY].tiletype != TileType::Air;
+
+    //Neighbor is to the left of the current chunk
+    if (neighbourX < 0)
+    {
+        //We make an exception so that it does not cut off weird at the start.
+        if (m_ChunkID - 1 < 0) return true;
+        return TerrainGenerator::IsTileValid(m_ChunkID - 1, TerrainGenerator::CHUNK_WIDTH - 1,neighbourY);
+    }
+
+    //Neighbor is to the right of the current chunk
+    if (neighbourX >= TerrainGenerator::CHUNK_WIDTH)
+    {
+        if (m_ChunkID + 1 >= m_TerrainGeneratorRef->GetChunks().size()) return true;
+        return TerrainGenerator::IsTileValid(m_ChunkID + 1, 0,neighbourY);
+    }
+
+    return false;
 }
 
 glm::vec2 Chunk::getPosition() const

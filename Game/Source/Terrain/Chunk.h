@@ -5,6 +5,13 @@
 
 #include "TerrainGenerator.h"
 
+struct TileBitmaskDirection
+{
+    int offsetX = 0;
+    int offsetY = 0;
+    int bitmask = 0;
+};
+
 class Chunk
 {
 public:
@@ -16,6 +23,7 @@ public:
     std::array<glm::vec2,4> GetTextureCoordinates(const Terra::Texture* textureRef, int tileID) const;
 
     bool IsTileInView(float x, float y) const;
+    bool IsTileValidNeighbor(int x, int y, const TileBitmaskDirection& direction) const;
     glm::vec2 getPosition() const;
 
    std::array<std::array<TileData,TerrainGenerator::CHUNK_HEIGHT>,TerrainGenerator::CHUNK_WIDTH> m_ChunkData {};
@@ -23,5 +31,5 @@ public:
 private:
     TerrainGenerator* m_TerrainGeneratorRef = nullptr;
     glm::vec2 m_Position;
-    int m_TileID = 0;
+    int m_ChunkID = 0;
 };

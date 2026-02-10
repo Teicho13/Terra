@@ -17,7 +17,7 @@ public:
     void SetTerrainGeneratorRef(TerrainGenerator* terrainGeneratorRef);
     void SetCameraManagerRef(CameraManager* cameraRef);
     void Jump();
-    void Clicked(float clickedX, float clickedY) const;
+    void Clicked(float clickedX, float clickedY, bool hasLeftClicked) const;
 
     glm::vec2 GetVelocity() const;
     Terra::Sprite& GetSprite();

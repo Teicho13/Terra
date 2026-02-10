@@ -113,6 +113,7 @@ namespace Terra
         s_RendererData.QuadIndexCount = 0;
         s_RendererData.QuadVertexDataAdressCopy = s_RendererData.QuadVertexDataAdress;
         s_RendererData.CurrentTextureSlots = 0;
+        s_RendererData.TexturesSlots.fill(nullptr);
         
         RenderStats::ResetData();
     }
@@ -125,6 +126,7 @@ namespace Terra
         s_RendererData.QuadIndexCount = 0;
         s_RendererData.QuadVertexDataAdressCopy = s_RendererData.QuadVertexDataAdress;
         s_RendererData.CurrentTextureSlots = 0;
+        s_RendererData.TexturesSlots.fill(nullptr);
     }
 
     void Renderer::Clear()

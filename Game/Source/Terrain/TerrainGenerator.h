@@ -4,20 +4,7 @@
 #include <vec3.hpp>
 
 #include "Core/Rendering/Texture.h"
-
-enum class TileType
-{
-    Air = 0,
-    Grass,
-    Dirt,
-    Stone,
-    Water,
-    Bark,
-    Leaf,
-    Copper,
-    Gold,
-    Diamond
-};
+#include "Tile.h"
 
 struct OreGenerationSettings
 {
@@ -42,6 +29,7 @@ public:
     void CreateChunks();
     void GenerateOres();
     void Render() const;
+    void Update(float deltaTime) const;
     bool IsChunkInView(float x) const;
     
     Terra::Texture* GetTextureRef() const;

@@ -60,7 +60,8 @@ void TestScene::Update(float DeltaTime)
 {
     m_CameraManager.Update(DeltaTime);
     m_Player->Update(DeltaTime);
-    
+
+    m_TerrainGenerator.Update(DeltaTime);
     m_AnimatedSpriteTest.Update(DeltaTime);
     m_AnimatedSpriteTest.SetScale(glm::vec3(32.f,32.f,1.f));
 }
@@ -142,6 +143,6 @@ void TestScene::OnMouseClicked(int button, int mods, const float posX, const flo
 {
     if (m_Player)
     {
-        m_Player->Clicked(posX, posY);
+        m_Player->Clicked(posX, posY, button);
     }
 }

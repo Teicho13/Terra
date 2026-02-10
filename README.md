@@ -17,6 +17,11 @@ A custom framework and application to learn about the basics of graphics program
 
 *Terrain generation using perlin noise*
 
+![Smart Tiling Showcase](https://www.tychocharko.com/projects/Personal/Terra/images/SmartTiling.gif)
+
+*Smart Tiling using bit masks*
+<br><br><br>
+
 ## :video_game: Controls
 
 ### Player

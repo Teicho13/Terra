@@ -127,14 +127,14 @@ bool Chunk::IsTileValidNeighbor(int x, int y, const TileBitmaskDirection& direct
     {
         //We make an exception so that it does not cut off weird at the start.
         if (m_ChunkID - 1 < 0) return true;
-        return m_TerrainGeneratorRef->IsTileValid(m_ChunkID - 1, TerrainGenerator::CHUNK_WIDTH - 1,neighbourY);
+        return m_TerrainGeneratorRef->IsTileValidAndSolid(m_ChunkID - 1, TerrainGenerator::CHUNK_WIDTH - 1,neighbourY);
     }
 
     //Neighbor is to the right of the current chunk
     if (neighbourX >= TerrainGenerator::CHUNK_WIDTH)
     {
         if (m_ChunkID + 1 >= m_TerrainGeneratorRef->GetChunks().size()) return true;
-        return m_TerrainGeneratorRef->IsTileValid(m_ChunkID + 1, 0,neighbourY);
+        return m_TerrainGeneratorRef->IsTileValidAndSolid(m_ChunkID + 1, 0,neighbourY);
     }
 
     return false;

@@ -37,7 +37,8 @@ public:
     std::vector<std::unique_ptr<Chunk>>& GetChunks();
 
     static void GetTileInfo(const glm::vec2& position, int& chunkID, int& column, int& row);
-    bool IsTileValid(int chunkID, int column, int row) const;
+    static bool IsTileValid(int chunkID, int column, int row);
+    bool IsTileValidAndSolid(int chunkID, int column, int row) const;
     glm::vec3 GetPlayerStartingPosition() const;
 
     void SetTerrainTexture(const std::string& TerrainTexturePath);

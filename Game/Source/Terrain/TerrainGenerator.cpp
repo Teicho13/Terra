@@ -215,7 +215,18 @@ void TerrainGenerator::GetTileInfo(const glm::vec2& position, int& chunkID, int&
     row = TileIndexY;
 }
 
-bool TerrainGenerator::IsTileValid(int chunkID, int column, int row) const
+bool TerrainGenerator::IsTileValid(int chunkID, int column, int row)
+{
+    constexpr int chunkAmount = m_WorldSize / CHUNK_WIDTH;
+    if (column < 0 || column > CHUNK_WIDTH - 1 || row < 0 || row > CHUNK_HEIGHT - 1 || chunkID < 0 || chunkID > chunkAmount - 1)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool TerrainGenerator::IsTileValidAndSolid(int chunkID, int column, int row) const
 {
     constexpr int chunkAmount = m_WorldSize / CHUNK_WIDTH;
     if (column < 0 || column > CHUNK_WIDTH - 1 || row < 0 || row > CHUNK_HEIGHT - 1 || chunkID < 0 || chunkID > chunkAmount - 1)

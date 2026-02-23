@@ -24,6 +24,7 @@ public:
 
     bool IsTileInView(float x, float y) const;
     bool IsTileValidNeighbor(int x, int y, const TileBitmaskDirection& direction) const;
+    int CalculateBitMask(int x, int y) const;
     glm::vec2 getPosition() const;
 
    std::array<std::array<TileData,TerrainGenerator::CHUNK_HEIGHT>,TerrainGenerator::CHUNK_WIDTH> m_ChunkData {};

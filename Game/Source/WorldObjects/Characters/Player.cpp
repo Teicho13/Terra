@@ -90,7 +90,7 @@ bool Player::CollisionCheck(const glm::vec2& position) const
         int chunk,x,y;
         TerrainGenerator::GetTileInfo(positions[i],chunk,x,y);
         
-        if (TerrainGenerator::IsTileValid(chunk,x,y))
+        if (m_TerrainGenRef->IsTileValid(chunk,x,y))
         {
             if (m_TerrainGenRef->GetChunks()[chunk]->m_ChunkData[x][y].tiletype != TileType::Air)
             {

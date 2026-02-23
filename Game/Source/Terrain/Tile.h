@@ -22,3 +22,5 @@ struct TileData
 };
 
 std::string GetTileTypePath(TileType tileType);
+
+int GetTileMaskValue(int bitmask);

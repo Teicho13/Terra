@@ -26,7 +26,7 @@ namespace Terra
 
     void Sprite::Draw() const
     {
-        Renderer::DrawQuad(m_Transform,m_Texture);
+        Renderer::DrawQuad(m_Transform,m_Texture,m_FlipXAxis,m_FlipYAxis);
     }
 
     void Sprite::Update(float deltaTime)
@@ -43,6 +43,26 @@ namespace Terra
         m_Transform[0] = scale.x != 0.0f ? glm::vec4(glm::normalize(glm::vec3(m_Transform[0])) * scale.x, 0.f) : glm::vec4(0.f);
         m_Transform[1] = scale.y != 0.0f ? glm::vec4(glm::normalize(glm::vec3(m_Transform[1])) * scale.y, 0.f) : glm::vec4(0.f);
         m_Transform[2] = scale.z != 0.0f ? glm::vec4(glm::normalize(glm::vec3(m_Transform[2])) * scale.z, 0.f) : glm::vec4(0.f);
+    }
+
+    void Sprite::SetFlipX(bool flipX)
+    {
+        m_FlipXAxis = flipX;
+    }
+
+    void Sprite::SetFlipY(bool flipY)
+    {
+        m_FlipYAxis = flipY;
+    }
+
+    bool Sprite::GetFlipX() const
+    {
+        return m_FlipXAxis;
+    }
+
+    bool Sprite::GetFlipY() const
+    {
+        return m_FlipYAxis;
     }
 
     glm::vec3 Sprite::GetPosition() const

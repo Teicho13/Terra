@@ -15,6 +15,8 @@ namespace Terra
         glm::vec2 Texcoord;
         float TextureID;
         float ShouldUseTexture;
+        float FlipX;
+        float FlipY;
     };
 
     struct RendererData
@@ -59,6 +61,8 @@ namespace Terra
         s_RendererData.VertexArray->AddAttribute(*s_RendererData.VertexBuffer,{.count = 2, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(QuadVertexData), .offset = (void*)offsetof(QuadVertexData, Texcoord)});
         s_RendererData.VertexArray->AddAttribute(*s_RendererData.VertexBuffer,{.count = 1, .type = GL_FLOAT  , .normalized = GL_FALSE, .stride = sizeof(QuadVertexData), .offset = (void*)offsetof(QuadVertexData, TextureID)});
         s_RendererData.VertexArray->AddAttribute(*s_RendererData.VertexBuffer,{.count = 1, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(QuadVertexData), .offset = (void*)offsetof(QuadVertexData, ShouldUseTexture)});
+        s_RendererData.VertexArray->AddAttribute(*s_RendererData.VertexBuffer,{.count = 1, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(QuadVertexData), .offset = (void*)offsetof(QuadVertexData, FlipX)});
+        s_RendererData.VertexArray->AddAttribute(*s_RendererData.VertexBuffer,{.count = 1, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(QuadVertexData), .offset = (void*)offsetof(QuadVertexData, FlipY)});
     
         //Set pointer to start of the array of quad vertices.
         s_RendererData.QuadVertexDataAdress = new QuadVertexData[s_RendererData.MaxVertices];
@@ -135,10 +139,11 @@ namespace Terra
         glClearColor(0.384f, 0.757f, 0.9f, 255.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
-
-    void Renderer::DrawQuadInternal(const glm::mat4& transform, const glm::vec4& color, const std::shared_ptr<Texture>& texture,
-        glm::vec2 textureCoords[4])
+    
+    void Renderer::DrawQuadInternal(QuadParameters& parameters)
     {
+        bool coordinatesCreated = false;
+        
         //We now the quad vertices ahead of time.
         constexpr size_t quadVertexCount = 4;
 
@@ -153,7 +158,7 @@ namespace Terra
         float textureIndex = -1.f;
         bool useTexture = false;
 
-        if (texture)
+        if (parameters.TextureParams.Texture)
         {
             useTexture = true;
 
@@ -161,7 +166,7 @@ namespace Terra
 
             for (unsigned int i = 0; i < s_RendererData.CurrentTextureSlots; i++)
             {
-                if (s_RendererData.TexturesSlots[i]->GetID() == texture->GetID())
+                if (s_RendererData.TexturesSlots[i]->GetID() == parameters.TextureParams.Texture->GetID())
                 {
                     textureIndex = static_cast<float>(i);
                     break;
@@ -177,65 +182,113 @@ namespace Terra
                 }
 
                 textureIndex = static_cast<float>(s_RendererData.CurrentTextureSlots);
-                s_RendererData.TexturesSlots[s_RendererData.CurrentTextureSlots] = texture;
+                s_RendererData.TexturesSlots[s_RendererData.CurrentTextureSlots] = parameters.TextureParams.Texture;
                 s_RendererData.CurrentTextureSlots++;
             }
         }
 
         //If we didnt give texture coordinates we set them manually since we know it is a quad.
-        if (!textureCoords)
+        if (!parameters.TextureParams.textureCoords)
         {
-            textureCoords = new glm::vec2[4]{ { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
+            parameters.TextureParams.textureCoords = new glm::vec2[4]{ { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
+            coordinatesCreated = true;
         }
 
         //Set data for each vertex
         for (size_t i = 0; i < quadVertexCount; i++)
         {
-            s_RendererData.QuadVertexDataAdressCopy->Position = transform * s_RendererData.QuadVertexPositions[i];
-            s_RendererData.QuadVertexDataAdressCopy->Color = color;
-            s_RendererData.QuadVertexDataAdressCopy->Texcoord = textureCoords[i];
+            s_RendererData.QuadVertexDataAdressCopy->Position = parameters.Transform * s_RendererData.QuadVertexPositions[i];
+            s_RendererData.QuadVertexDataAdressCopy->Color = parameters.Color;
+            s_RendererData.QuadVertexDataAdressCopy->Texcoord = parameters.TextureParams.textureCoords[i];
             s_RendererData.QuadVertexDataAdressCopy->TextureID = textureIndex;
             s_RendererData.QuadVertexDataAdressCopy->ShouldUseTexture = useTexture ? 1.f : 0.f;
+            s_RendererData.QuadVertexDataAdressCopy->FlipX = static_cast<float>(parameters.TextureParams.FlipX);
+            s_RendererData.QuadVertexDataAdressCopy->FlipY = static_cast<float>(parameters.TextureParams.FlipY);
             s_RendererData.QuadVertexDataAdressCopy++;
         }
 
         s_RendererData.QuadIndexCount += 6;
         RenderStats::s_DrawnQuads++;
+
+        //Cleanup texture coordinates if we created them locally.
+        if (coordinatesCreated)
+        {
+            delete parameters.TextureParams.textureCoords;
+        }
     }
 
     void Renderer::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
     {
-        DrawQuadInternal(transform,color);
+        QuadParameters quadParameters;
+        quadParameters.Transform = transform;
+        quadParameters.Color = color;
+        DrawQuadInternal(quadParameters);
     }
     
-    void Renderer::DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture>& texture)
+    void Renderer::DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture>& texture, bool flipX, bool flipY)
     {
-        DrawQuadInternal(transform,glm::vec4(1.0f),texture);
+        QuadParameters quadParameters;
+        quadParameters.Transform = transform;
+        quadParameters.Color = glm::vec4(1.f);
+        quadParameters.TextureParams.Texture = texture;
+        quadParameters.TextureParams.FlipX = flipX;
+        quadParameters.TextureParams.FlipY = flipY;
+        
+        DrawQuadInternal(quadParameters);
     }
 
     void Renderer::DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture>& texture,
-        glm::vec2 textureCoords[4])
+        glm::vec2 textureCoords[4], bool flipX, bool flipY)
     {
-        DrawQuadInternal(transform,glm::vec4(1.0f),texture,textureCoords);
+        QuadParameters quadParameters;
+        quadParameters.Transform = transform;
+        quadParameters.Color = glm::vec4(1.f);
+        quadParameters.TextureParams.Texture = texture;
+        quadParameters.TextureParams.textureCoords = textureCoords;
+        quadParameters.TextureParams.FlipX = flipX;
+        quadParameters.TextureParams.FlipY = flipY;
+        DrawQuadInternal(quadParameters);
     }
 
     void Renderer::DrawQuad(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color)
     {
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-        DrawQuadInternal(transform, color);
+
+        QuadParameters quadParameters;
+        quadParameters.Transform = transform;
+        quadParameters.Color = color;
+        
+        DrawQuadInternal(quadParameters);
     }
 
-    void Renderer::DrawQuad(const glm::vec3& position, const glm::vec3& size, const std::shared_ptr<Texture>& texture)
+    void Renderer::DrawQuad(const glm::vec3& position, const glm::vec3& size, const std::shared_ptr<Texture>& texture, bool flipX, bool flipY)
     {
         const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-        DrawQuadInternal(transform,glm::vec4(1.0f),texture);
+
+        QuadParameters quadParameters;
+        quadParameters.Transform = transform;
+        quadParameters.Color = glm::vec4(1.0f);
+        quadParameters.TextureParams.Texture = texture;
+        quadParameters.TextureParams.FlipX = flipX;
+        quadParameters.TextureParams.FlipY = flipY;
+            
+        DrawQuadInternal(quadParameters);
     }
 
     void Renderer::DrawQuad(const glm::vec3& position, const glm::vec3& size, const std::shared_ptr<Texture>& texture,
-        glm::vec2 textureCoords[4])
+        glm::vec2 textureCoords[4], bool flipX, bool flipY)
     {
         const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-        DrawQuadInternal(transform,glm::vec4(1.0f),texture,textureCoords);
+
+        QuadParameters quadParameters;
+        quadParameters.Transform = transform;
+        quadParameters.Color = glm::vec4(1.0f);
+        quadParameters.TextureParams.Texture = texture;
+        quadParameters.TextureParams.textureCoords = textureCoords;
+        quadParameters.TextureParams.FlipX = flipX;
+        quadParameters.TextureParams.FlipY = flipY;
+
+        DrawQuadInternal(quadParameters);
     }
     
     void Renderer::Flush()

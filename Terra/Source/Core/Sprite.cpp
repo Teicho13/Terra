@@ -2,6 +2,8 @@
 
 #include <ext/matrix_transform.hpp>
 
+#include "AnimatedSprite.h"
+#include "AnimatedSprite.h"
 #include "Application.h"
 #include "ResourceManager.h"
 #include "Rendering/Renderer.h"
@@ -35,12 +37,12 @@ namespace Terra
     {
         m_Transform[3] = glm::vec4(position, 1.f);
     }
-
-    void Sprite::SetScale(const glm::vec3 scale)
+    
+    void Sprite::SetScale(const glm::vec3& scale)
     {
-        m_Transform[0] = glm::vec4(glm::normalize(glm::vec3(m_Transform[0])) * scale.x, 0.f);
-        m_Transform[1] = glm::vec4(glm::normalize(glm::vec3(m_Transform[1])) * scale.y, 0.f);
-        m_Transform[2] = glm::vec4(glm::normalize(glm::vec3(m_Transform[2])) * scale.z, 0.f);
+        m_Transform[0] = scale.x != 0.0f ? glm::vec4(glm::normalize(glm::vec3(m_Transform[0])) * scale.x, 0.f) : glm::vec4(0.f);
+        m_Transform[1] = scale.y != 0.0f ? glm::vec4(glm::normalize(glm::vec3(m_Transform[1])) * scale.y, 0.f) : glm::vec4(0.f);
+        m_Transform[2] = scale.z != 0.0f ? glm::vec4(glm::normalize(glm::vec3(m_Transform[2])) * scale.z, 0.f) : glm::vec4(0.f);
     }
 
     glm::vec3 Sprite::GetPosition() const

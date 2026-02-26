@@ -15,7 +15,7 @@ namespace Terra
         virtual void Draw() const;
         virtual void Update(float deltaTime);
         void SetPosition(glm::vec3 position);
-        void SetScale(glm::vec3 scale);
+        void SetScale(const glm::vec3& scale);
 
         glm::vec3 GetPosition() const;
         glm::vec3 GetScale() const;

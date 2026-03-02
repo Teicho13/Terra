@@ -27,7 +27,7 @@ namespace Terra
 
             if (m_Time >= 1.f)
             {
-                m_CurrentFrame++;
+                m_CurrentFrame += m_IsReversed ? -1 : 1;
                 m_Time = 0.f;
 
                 if (m_CurrentFrame > m_MaxFrames)
@@ -43,12 +43,28 @@ namespace Terra
                     }
                 }
 
+                if (m_CurrentFrame < 0)
+                {
+                    if (m_LoopAnimation)
+                    {
+                        m_CurrentFrame = m_MaxFrames;
+                    }
+                    else
+                    {
+                        m_CurrentFrame = 0;
+                        Stop();
+                    }
+                }
+
                 UpdateTextureCoordinates();
             }
         }
     }
 
     void Animation::SetLooped(const bool newValue) { m_LoopAnimation = newValue;}
+
+    void Animation::SetReverse(bool newValue) { m_IsReversed = newValue; }
+
     void Animation::SetFrameSpeed(const float newSpeed) { m_FrameSpeed = newSpeed; }
 
     void Animation::UpdateTextureCoordinates()
@@ -70,6 +86,8 @@ namespace Terra
     
     bool Animation::IsPlaying() const { return m_IsPlaying; }
     bool Animation::IsLooped() const { return m_LoopAnimation; }
+    bool Animation::IsReversed() const { return m_IsReversed; }
+
     int Animation::CurrentFrame() const { return m_CurrentFrame;}
 
     int Animation::MaxFrames() const { return m_MaxFrames + 1; }

@@ -11,6 +11,7 @@ namespace Terra
         void Initialize(int maxFrames);
         void Update(float deltaTime);
         void SetLooped(bool newValue);
+        void SetReverse(bool newValue);
         void SetFrameSpeed(float newSpeed);
         
         void Play();
@@ -19,6 +20,7 @@ namespace Terra
 
         bool IsPlaying() const;
         bool IsLooped() const;
+        bool IsReversed() const;
         int CurrentFrame() const;
         int MaxFrames() const;
 
@@ -29,6 +31,7 @@ namespace Terra
     private:
         bool m_IsPlaying = false;
         bool m_LoopAnimation = false;
+        bool m_IsReversed = false;
         float m_FrameSpeed = 1.0f;
 
         int m_MaxFrames = 0;

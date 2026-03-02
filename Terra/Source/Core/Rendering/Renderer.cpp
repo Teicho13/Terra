@@ -61,8 +61,6 @@ namespace Terra
         s_RendererData.VertexArray->AddAttribute(*s_RendererData.VertexBuffer,{.count = 2, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(QuadVertexData), .offset = (void*)offsetof(QuadVertexData, Texcoord)});
         s_RendererData.VertexArray->AddAttribute(*s_RendererData.VertexBuffer,{.count = 1, .type = GL_FLOAT  , .normalized = GL_FALSE, .stride = sizeof(QuadVertexData), .offset = (void*)offsetof(QuadVertexData, TextureID)});
         s_RendererData.VertexArray->AddAttribute(*s_RendererData.VertexBuffer,{.count = 1, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(QuadVertexData), .offset = (void*)offsetof(QuadVertexData, ShouldUseTexture)});
-        s_RendererData.VertexArray->AddAttribute(*s_RendererData.VertexBuffer,{.count = 1, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(QuadVertexData), .offset = (void*)offsetof(QuadVertexData, FlipX)});
-        s_RendererData.VertexArray->AddAttribute(*s_RendererData.VertexBuffer,{.count = 1, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = sizeof(QuadVertexData), .offset = (void*)offsetof(QuadVertexData, FlipY)});
     
         //Set pointer to start of the array of quad vertices.
         s_RendererData.QuadVertexDataAdress = new QuadVertexData[s_RendererData.MaxVertices];
@@ -193,6 +191,18 @@ namespace Terra
             parameters.TextureParams.textureCoords = new glm::vec2[4]{ { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
             coordinatesCreated = true;
         }
+        
+        if (parameters.TextureParams.FlipX)
+        {
+            std::swap(parameters.TextureParams.textureCoords[0], parameters.TextureParams.textureCoords[3]);
+            std::swap(parameters.TextureParams.textureCoords[1], parameters.TextureParams.textureCoords[2]);
+        }
+
+        if (parameters.TextureParams.FlipY)
+        {
+            std::swap(parameters.TextureParams.textureCoords[0], parameters.TextureParams.textureCoords[1]);
+            std::swap(parameters.TextureParams.textureCoords[3], parameters.TextureParams.textureCoords[2]);
+        }
 
         //Set data for each vertex
         for (size_t i = 0; i < quadVertexCount; i++)
@@ -202,8 +212,6 @@ namespace Terra
             s_RendererData.QuadVertexDataAdressCopy->Texcoord = parameters.TextureParams.textureCoords[i];
             s_RendererData.QuadVertexDataAdressCopy->TextureID = textureIndex;
             s_RendererData.QuadVertexDataAdressCopy->ShouldUseTexture = useTexture ? 1.f : 0.f;
-            s_RendererData.QuadVertexDataAdressCopy->FlipX = static_cast<float>(parameters.TextureParams.FlipX);
-            s_RendererData.QuadVertexDataAdressCopy->FlipY = static_cast<float>(parameters.TextureParams.FlipY);
             s_RendererData.QuadVertexDataAdressCopy++;
         }
 

@@ -45,7 +45,7 @@ TestScene::TestScene()
     m_CameraManager.SetCameraMovementLimits(0,((m_TerrainGenerator.GetChunks().size() - ChunkPerScreen) * TerrainGenerator::CHUNK_WIDTH) * tileSize,0,TerrainGenerator::CHUNK_HEIGHT * tileSize);
     m_CameraManager.SetCameraPosition(0.0f,(TerrainGenerator::CHUNK_HEIGHT / 2) * tileSize,0.0f);
 
-    m_Player = std::make_unique<Player>(Terra::FileIO::GetGameFile("Characters\\PlayerWalking.png"));
+    m_Player = std::make_unique<Player>(Terra::FileIO::GetGameFile("Characters\\Player.png"));
     m_Player->GetSprite().SetPosition(m_TerrainGenerator.GetPlayerStartingPosition());
     m_Player->SetTerrainGeneratorRef(&m_TerrainGenerator);
     m_Player->SetCameraManagerRef(&m_CameraManager);

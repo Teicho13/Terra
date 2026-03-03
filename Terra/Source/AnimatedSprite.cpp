@@ -6,7 +6,7 @@ namespace Terra
     AnimatedSprite::AnimatedSprite(const std::string& texturePath, int FrameCount)
         :Sprite(texturePath)
     {
-        m_Animation.Initialize(FrameCount);
+        m_Animation.SetFrameCount(FrameCount);
     }
 
     void AnimatedSprite::Update(float deltaTime)

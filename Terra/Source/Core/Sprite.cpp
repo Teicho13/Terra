@@ -55,6 +55,11 @@ namespace Terra
         m_FlipYAxis = flipY;
     }
 
+    void Sprite::ReplaceTexture(const std::shared_ptr<Texture>& texture)
+    {
+        m_Texture = texture;
+    }
+
     bool Sprite::GetFlipX() const
     {
         return m_FlipXAxis;

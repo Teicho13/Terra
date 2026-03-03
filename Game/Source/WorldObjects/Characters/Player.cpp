@@ -7,18 +7,22 @@
 #include "../../Terrain/Chunk.h"
 #include "../../Terrain/TerrainGenerator.h"
 #include "Core/Application.h"
+#include "Core/FileIO.h"
+#include "Core/ResourceManager.h"
 #include "Core/Rendering/Renderer.h"
 
 Player::Player(const std::string& SpriteTexturePath)
-    :m_AnimatedSprite(SpriteTexturePath,14), m_Velocity(0.f,0.f)
+    :m_Velocity(0.f,0.f), m_AnimatedSprite(SpriteTexturePath,1)
 {
     m_AnimatedSprite.SetScale({32.f,48.f,0.f});
     m_AnimatedSprite.SetFlipX(true);
     auto& anim = m_AnimatedSprite.GetAnimation();
     anim.SetLooped(true);
     anim.SetFrameSpeed(20.f);
-    anim.Play();
-   }
+
+    CreatePlayerAnimations();
+    SwapAnimation("Walk");
+}
 
 void Player::SetTerrainGeneratorRef(TerrainGenerator* terrainGeneratorRef)
 {
@@ -76,6 +80,28 @@ void Player::Draw()
     m_AnimatedSprite.Draw();
 }
 
+bool Player::SwapAnimation(const char* animationName)
+{
+    //Find struct with the given name in our animations array
+    
+   const auto it = std::ranges::find_if(m_Animations,[animationName] (const PlayerAnimation& a)
+   {
+       return a.Name == animationName;
+   });
+
+    if (it != m_Animations.end())
+    {
+        // If found replace texture and update frame count.
+        
+        m_AnimatedSprite.ReplaceTexture(it->Texture);
+        m_AnimatedSprite.GetAnimation().SetFrameCount(it->Framecount);
+
+        return true;
+    }
+
+    return false;
+}
+
 Terra::Sprite& Player::GetSprite()
 {
     return m_AnimatedSprite;
@@ -114,6 +140,17 @@ bool Player::CollisionCheck(const glm::vec2& position) const
     }
     
     return false;
+}
+
+void Player::CreatePlayerAnimations()
+{
+    m_Animations[0].Name = "Idle";
+    m_Animations[0].Framecount = 1;
+    m_Animations[0].Texture = Terra::ResourceManager::GetInstance().GetTexture(Terra::FileIO::GetGameFile("Characters\\Player.png"));
+
+    m_Animations[1].Name = "Walk";
+    m_Animations[1].Framecount = 14;
+    m_Animations[1].Texture = Terra::ResourceManager::GetInstance().GetTexture(Terra::FileIO::GetGameFile("Characters\\PlayerWalking.png"));
 }
 
 void Player::Move(float dt)

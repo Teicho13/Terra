@@ -3,7 +3,7 @@
 namespace Terra
 {
     //1 will be subtracted from the maxFrames to account for frame 0. eg: 3 = 0,1,2
-    void Animation::Initialize(int maxFrames)
+    void Animation::SetFrameCount(int maxFrames)
     {
         maxFrames = maxFrames - 1;
         if (maxFrames < 0)

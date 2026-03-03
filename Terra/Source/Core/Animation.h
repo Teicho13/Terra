@@ -8,7 +8,7 @@ namespace Terra
     class Animation
     {
     public:
-        void Initialize(int maxFrames);
+        void SetFrameCount(int maxFrames);
         void Update(float deltaTime);
         void SetLooped(bool newValue);
         void SetReverse(bool newValue);

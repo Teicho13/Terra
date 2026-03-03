@@ -19,6 +19,8 @@ namespace Terra
         void SetFlipX(bool flipX);
         void SetFlipY(bool flipY);
 
+        void ReplaceTexture(const std::shared_ptr<Texture>& texture);
+
         glm::vec3 GetPosition() const;
         glm::vec3 GetScale() const;
         glm::mat4 GetTransform() const;

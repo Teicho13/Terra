@@ -63,7 +63,7 @@ namespace Terra
 
     void Animation::SetLooped(const bool newValue) { m_LoopAnimation = newValue;}
 
-    void Animation::SetReverse(bool newValue) { m_IsReversed = newValue; }
+    void Animation::SetReverse(const bool newValue) { m_IsReversed = newValue; }
 
     void Animation::SetFrameSpeed(const float newSpeed) { m_FrameSpeed = newSpeed; }
 

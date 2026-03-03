@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Sprite.h"
+#include "AnimatedSprite.h"
 #include "Core/Rendering/Camera.h"
 
 class TerrainGenerator;
@@ -36,7 +36,7 @@ private:
     float m_Gravity = -1000.f;
     bool m_IsGrounded = true;
     
-    Terra::Sprite m_Sprite;
+    Terra::AnimatedSprite m_AnimatedSprite;
     TerrainGenerator* m_TerrainGenRef = nullptr;
     CameraManager* m_CameraRef = nullptr;
 };

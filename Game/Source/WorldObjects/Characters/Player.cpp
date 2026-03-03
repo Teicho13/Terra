@@ -10,9 +10,15 @@
 #include "Core/Rendering/Renderer.h"
 
 Player::Player(const std::string& SpriteTexturePath)
-    :m_Sprite(SpriteTexturePath), m_Velocity(0.f,0.f)
+    :m_AnimatedSprite(SpriteTexturePath,14), m_Velocity(0.f,0.f)
 {
-}
+    m_AnimatedSprite.SetScale({32.f,48.f,0.f});
+    m_AnimatedSprite.SetFlipX(true);
+    auto& anim = m_AnimatedSprite.GetAnimation();
+    anim.SetLooped(true);
+    anim.SetFrameSpeed(20.f);
+    anim.Play();
+   }
 
 void Player::SetTerrainGeneratorRef(TerrainGenerator* terrainGeneratorRef)
 {
@@ -57,25 +63,29 @@ glm::vec2 Player::GetVelocity() const
 
 void Player::Update(const float dt)
 {
+    m_AnimatedSprite.Update(dt);
+
     ProccessInput(dt);
     Move(dt);
+
+    
 }
 
 void Player::Draw()
 {
-    m_Sprite.Draw();
+    m_AnimatedSprite.Draw();
 }
 
 Terra::Sprite& Player::GetSprite()
 {
-    return m_Sprite;
+    return m_AnimatedSprite;
 }
 
 bool Player::CollisionCheck(const glm::vec2& position) const
 {
     if (!m_TerrainGenRef) return false;
     
-    const glm::vec2 size = m_Sprite.GetScale();
+    const glm::vec2 size = m_AnimatedSprite.GetScale();
 
     //All corners of the sprite
     std::array<glm::vec2, 4> positions;
@@ -110,24 +120,54 @@ void Player::Move(float dt)
 {
     if (m_Velocity.x != 0.f)
     {
-        auto oldPosition = m_Sprite.GetPosition();
+        auto oldPosition = m_AnimatedSprite.GetPosition();
         oldPosition.x += m_Velocity.x * dt;
         if (!CollisionCheck(oldPosition))
         {
-            m_Sprite.SetPosition(oldPosition); 
+            m_AnimatedSprite.SetPosition(oldPosition);
+
+            auto& anim = m_AnimatedSprite.GetAnimation();
+
+            if (m_Velocity.x > 0.f)
+            {
+                if (!m_AnimatedSprite.GetFlipX())
+                {
+                    m_AnimatedSprite.SetFlipX(true);
+                }
+            }
+
+            if (m_Velocity.x < 0.f)
+            {
+                if (m_AnimatedSprite.GetFlipX())
+                {
+                    m_AnimatedSprite.SetFlipX(false);
+                }
+                
+            }
+            
+            if (!anim.IsPlaying())
+            {
+                m_AnimatedSprite.GetAnimation().Play();
+            }
         }
         else
         {
             m_Velocity.x = 0.f;
         }
+    }else
+    {
+        if (m_AnimatedSprite.GetAnimation().IsPlaying())
+        {
+            m_AnimatedSprite.GetAnimation().Stop();
+        }
     }
-
+    
     m_Velocity.y += m_Gravity * dt;
-    auto oldPosition = m_Sprite.GetPosition();
+    auto oldPosition = m_AnimatedSprite.GetPosition();
     oldPosition.y += m_Velocity.y * dt;
     if (!CollisionCheck(oldPosition))
     {
-        m_Sprite.SetPosition(oldPosition); 
+        m_AnimatedSprite.SetPosition(oldPosition);
     }
     else
     {
@@ -136,9 +176,9 @@ void Player::Move(float dt)
     }
 
     //Check so that we wont go out of bounds
-    if (m_Sprite.GetPosition().x <= 0.f)
+    if (m_AnimatedSprite.GetPosition().x <= 0.f)
     {
-        m_Sprite.SetPosition({0,m_Sprite.GetPosition().y,m_Sprite.GetPosition().z});
+        m_AnimatedSprite.SetPosition({0,m_AnimatedSprite.GetPosition().y,m_AnimatedSprite.GetPosition().z});
         m_Velocity.x = 0.f;
     }
 }

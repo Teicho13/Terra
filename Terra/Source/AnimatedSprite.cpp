@@ -18,6 +18,6 @@ namespace Terra
     {
         Renderer::DrawQuad(m_Transform,m_Texture,m_Animation.GetTextureCoordinates().data(),m_FlipXAxis,m_FlipYAxis);
     }
-
+    
     Animation& AnimatedSprite::GetAnimation() { return m_Animation; }
 }

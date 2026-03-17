@@ -2,13 +2,6 @@
 #include "AnimatedSprite.h"
 #include "Core/Rendering/Camera.h"
 
-struct PlayerAnimation
-{
-    std::string Name;
-    std::shared_ptr<Terra::Texture> Texture = nullptr;
-    int Framecount = 0;
-};
-
 class TerrainGenerator;
 class CameraManager;
 class Player
@@ -33,6 +26,7 @@ public:
 private:
     void Move(float dt);
     void ProccessInput(float dt);
+    void AnimationChecks();
     
     bool CollisionCheck(const glm::vec2& position) const;
 
@@ -50,5 +44,5 @@ private:
     TerrainGenerator* m_TerrainGenRef = nullptr;
     CameraManager* m_CameraRef = nullptr;
 
-    std::array<PlayerAnimation, 2> m_Animations;
+    std::array<AnimationClip, 3> m_Animations;
 };

@@ -21,7 +21,7 @@ Player::Player(const std::string& SpriteTexturePath)
     anim.SetFrameSpeed(20.f);
 
     CreatePlayerAnimations();
-    SwapAnimation("Walk");
+    SwapAnimation("Idle");
 }
 
 void Player::SetTerrainGeneratorRef(TerrainGenerator* terrainGeneratorRef)
@@ -39,9 +39,10 @@ void Player::Jump()
     if (m_IsGrounded)
     {
         m_Velocity.y = m_JumpForce;
-        m_IsGrounded = false; 
+        m_IsGrounded = false;
+        SwapAnimation("Jump");
+        m_AnimatedSprite.GetAnimation().Stop();
     }
-   
 }
 
 void Player::Clicked(const float clickedX, const float clickedY, bool hasRightClicked) const
@@ -71,8 +72,6 @@ void Player::Update(const float dt)
 
     ProccessInput(dt);
     Move(dt);
-
-    
 }
 
 void Player::Draw()
@@ -84,17 +83,19 @@ bool Player::SwapAnimation(const char* animationName)
 {
     //Find struct with the given name in our animations array
     
-   const auto it = std::ranges::find_if(m_Animations,[animationName] (const PlayerAnimation& a)
-   {
+    const auto it = std::ranges::find_if(m_Animations,[animationName] (const AnimationClip& a)
+    {
        return a.Name == animationName;
-   });
+    });
 
     if (it != m_Animations.end())
     {
         // If found replace texture and update frame count.
-        
+
+        m_AnimatedSprite.GetAnimation().Reset();
         m_AnimatedSprite.ReplaceTexture(it->Texture);
         m_AnimatedSprite.GetAnimation().SetFrameCount(it->Framecount);
+        m_AnimatedSprite.m_CurrentAnimation = &(*it);
 
         return true;
     }
@@ -151,9 +152,13 @@ void Player::CreatePlayerAnimations()
     m_Animations[1].Name = "Walk";
     m_Animations[1].Framecount = 14;
     m_Animations[1].Texture = Terra::ResourceManager::GetInstance().GetTexture(Terra::FileIO::GetGameFile("Characters\\PlayerWalking.png"));
+
+    m_Animations[2].Name = "Jump";
+    m_Animations[2].Framecount = 1;
+    m_Animations[2].Texture = Terra::ResourceManager::GetInstance().GetTexture(Terra::FileIO::GetGameFile("Characters\\PlayerJump.png"));
 }
 
-void Player::Move(float dt)
+void Player::Move(const float dt)
 {
     if (m_Velocity.x != 0.f)
     {
@@ -162,40 +167,10 @@ void Player::Move(float dt)
         if (!CollisionCheck(oldPosition))
         {
             m_AnimatedSprite.SetPosition(oldPosition);
-
-            auto& anim = m_AnimatedSprite.GetAnimation();
-
-            if (m_Velocity.x > 0.f)
-            {
-                if (!m_AnimatedSprite.GetFlipX())
-                {
-                    m_AnimatedSprite.SetFlipX(true);
-                }
-            }
-
-            if (m_Velocity.x < 0.f)
-            {
-                if (m_AnimatedSprite.GetFlipX())
-                {
-                    m_AnimatedSprite.SetFlipX(false);
-                }
-                
-            }
-            
-            if (!anim.IsPlaying())
-            {
-                m_AnimatedSprite.GetAnimation().Play();
-            }
         }
         else
         {
             m_Velocity.x = 0.f;
-        }
-    }else
-    {
-        if (m_AnimatedSprite.GetAnimation().IsPlaying())
-        {
-            m_AnimatedSprite.GetAnimation().Stop();
         }
     }
     
@@ -218,9 +193,11 @@ void Player::Move(float dt)
         m_AnimatedSprite.SetPosition({0,m_AnimatedSprite.GetPosition().y,m_AnimatedSprite.GetPosition().z});
         m_Velocity.x = 0.f;
     }
+
+    AnimationChecks();
 }
 
-void Player::ProccessInput(float dt)
+void Player::ProccessInput(const float dt)
 {
     const auto window = Terra::Application::GetApplication()->GetWindow()->GetWindow();
 
@@ -251,4 +228,49 @@ void Player::ProccessInput(float dt)
     }
     
     m_Velocity.x = std::clamp(m_Velocity.x, -m_MaxSpeed, m_MaxSpeed);
+}
+
+void Player::AnimationChecks()
+{
+    //Check if we need to swap sprite direction.
+    
+    if (m_Velocity.x > 0.f)
+    {
+        if (!m_AnimatedSprite.GetFlipX())
+        {
+            m_AnimatedSprite.SetFlipX(true);
+        }
+    }
+
+    if (m_Velocity.x < 0.f)
+    {
+        if (m_AnimatedSprite.GetFlipX())
+        {
+            m_AnimatedSprite.SetFlipX(false);
+        }
+    }
+
+    //Check if we are jumping or walking on the ground.
+
+    if (m_IsGrounded)
+    {
+        auto& anim = m_AnimatedSprite.GetAnimation();
+        
+        if (m_Velocity.x > 0.f || m_Velocity.x < 0.f)
+        {
+            if (m_AnimatedSprite.m_CurrentAnimation->Name != "Walk")
+            {
+                SwapAnimation("Walk");
+                anim.Play();
+            }
+        }
+        else
+        {
+            if (m_AnimatedSprite.m_CurrentAnimation->Name != "Idle")
+            {
+                SwapAnimation("Idle");
+                anim.Stop();
+            }
+        }
+    }
 }

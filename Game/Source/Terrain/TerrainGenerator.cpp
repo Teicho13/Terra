@@ -1,5 +1,6 @@
 #include "TerrainGenerator.h"
 #include <random>
+#include <cmath>
 
 #include "PerlinNoise.hpp"
 #include "Core/ResourceManager.h"
@@ -195,24 +196,22 @@ std::vector<std::unique_ptr<Chunk>>& TerrainGenerator::GetChunks()
 
 void TerrainGenerator::GetTileInfo(const glm::vec2& position, int& chunkID, int& column, int& row)
 {
-    const int CurrentChunk = static_cast<int>(position.x / (CHUNK_WIDTH * TILE_SIZE));
-
-    const int TilePositionX = static_cast<int>(position.x) % (CHUNK_WIDTH * TILE_SIZE);
-    const int TilePositionY = static_cast<int>(position.y) % (CHUNK_HEIGHT * TILE_SIZE);
+    const int TilePositionX = static_cast<int>(std::floor(position.x / static_cast<float>(TILE_SIZE)));
+    const int TilePositionY = static_cast<int>(std::floor(position.y / static_cast<float>(TILE_SIZE)));
+    const int CurrentChunk = TilePositionX / CHUNK_WIDTH;
     
-    int TileIndexX = TilePositionX / TILE_SIZE;
-    int TileIndexY = TilePositionY / TILE_SIZE;
+    const int ChunkTilePositionX = TilePositionX - (CurrentChunk * CHUNK_WIDTH);
 
     //Exit out if invalid Index.
-    if (TileIndexX < 0 || TileIndexX > CHUNK_WIDTH - 1 || TileIndexY < 0 || TileIndexY > CHUNK_HEIGHT - 1)
+    if (!IsTileValid(CurrentChunk,ChunkTilePositionX,TilePositionY))
     {
-        chunkID = column = row = - 1;
+        chunkID = column = row = -1;
         return;
     }
 
     chunkID = CurrentChunk;
-    column = TileIndexX;
-    row = TileIndexY;
+    column = ChunkTilePositionX;
+    row = TilePositionY;
 }
 
 bool TerrainGenerator::IsTileValid(int chunkID, int column, int row)

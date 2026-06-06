@@ -11,6 +11,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Terra", "Terra\Terra.vcxproj", "{C2703A3F-94BE-4553-B2D8-D999EDBE6414}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScuffedMon", "ScuffedMon\ScuffedMon.vcxproj", "{BEFD1AC9-DE95-459A-BDB7-B5D79F21F1DC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C2703A3F-94BE-4553-B2D8-D999EDBE6414} = {C2703A3F-94BE-4553-B2D8-D999EDBE6414}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

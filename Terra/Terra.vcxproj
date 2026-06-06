@@ -105,7 +105,10 @@
     </Lib>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"
-xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"</Command>
+xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"
+
+mkdir "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\ScuffedMon\Assets\$(ProjectName)"
+xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\ScuffedMon\Assets\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,7 +132,10 @@ xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-
     </Lib>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"
-xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"</Command>
+xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"
+
+mkdir "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\ScuffedMon\Assets\$(ProjectName)"
+xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\ScuffedMon\Assets\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -151,7 +157,10 @@ xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-
     </Lib>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"
-xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"</Command>
+xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"
+
+mkdir "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\ScuffedMon\Assets\$(ProjectName)"
+xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\ScuffedMon\Assets\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -175,7 +184,10 @@ xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-
     </Lib>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"
-xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"</Command>
+xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\Game\Assets\$(ProjectName)"
+
+mkdir "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\ScuffedMon\Assets\$(ProjectName)"
+xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-$(Platform)\ScuffedMon\Assets\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -2,20 +2,23 @@
 
 #include "World.h"
 #include "Core/Application.h"
-
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
 #include "Core/Rendering/Renderer.h"
 
+#include "Player.h"
+#include "Core/FileIO.h"
+
 static Terra::WindowSpecs GetWindowSpecs()
 {
     return Terra::Application::GetApplication()->GetWindow()->GetWindowSpecs();
 }
 
-World::World()
+World::World() : m_camera(0 * 1.0f,static_cast<float>(GetWindowSpecs().width) * 1.0f,0,static_cast<float>(GetWindowSpecs().height) * 1.0f)
 {
+    m_Player = std::make_unique<Player>(Terra::FileIO::GetScuffedMonFile(R"(Characters\Player\player-idle.png)"));
 }
 
 World::~World()
@@ -25,11 +28,18 @@ World::~World()
 
 void World::Update(float DeltaTime)
 {
+    m_Player->Update(DeltaTime);
 }
 
 void World::Render()
 {
+    Terra::Renderer::RenderScene(m_camera);
     //Draw all gathered indices.
+    m_Player->Draw();
+    
+
+    Terra::Renderer::Flush();
+    
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

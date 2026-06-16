@@ -15,5 +15,5 @@ public:
     Terra::Sprite& GetSprite();
 private:
     Terra::AnimatedSprite m_AnimatedSprite;
-    std::array<AnimationClip, 3> m_Animations;
+    std::array<AnimationClip, 4> m_Animations;
 };

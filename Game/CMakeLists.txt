@@ -4,6 +4,10 @@ file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS
 
 add_executable(Game ${GAME_SOURCES})
 
+set_target_properties(Game PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:Game>"
+)
+
 target_include_directories(Game
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/Source"

@@ -4,6 +4,10 @@ file(GLOB_RECURSE SCUFFEDMON_SOURCES CONFIGURE_DEPENDS
 
 add_executable(ScuffedMon ${SCUFFEDMON_SOURCES})
 
+set_target_properties(ScuffedMon PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:ScuffedMon>"
+)
+
 target_include_directories(ScuffedMon
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/Source"

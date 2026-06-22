@@ -25,3 +25,9 @@ target_compile_definitions(Terra
     PUBLIC
         $<$<PLATFORM_ID:Windows>:WIN32>
 )
+
+add_custom_command(TARGET Terra POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/Resources"
+        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>/Assets/Terra"
+)

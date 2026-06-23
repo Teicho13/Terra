@@ -22,6 +22,12 @@ A custom framework and application to learn about the basics of graphics program
 *Smart Tiling using bit masks*
 <br><br><br>
 
+## How to build / Run
+* Run build-terra.bat.
+* Select Project & Config.
+* Go to bin/out/(config)/ to run exe or open shortcut to open visual studio.
+
+
 ## :video_game: Controls
 
 ### Player

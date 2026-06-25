@@ -8,7 +8,7 @@
 
 #include "Chunk.h"
 #include "Core/Application.h"
-#include "Core/Rendering/Camera.h"
+#include "Core/Rendering/Camera/Camera.h"
 
 TerrainGenerator::TerrainGenerator()
 {

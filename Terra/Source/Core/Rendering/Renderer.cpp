@@ -2,7 +2,7 @@
 #include <array>
 #include <ext/matrix_transform.hpp>
 
-#include "Camera.h"
+#include "Camera/Camera.h"
 #include "VertexArray.h"
 #include "Core/FileIO.h"
 

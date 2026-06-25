@@ -2,7 +2,7 @@
 
 #include "Core/Application.h"
 #include "Core/ResourceManager.h"
-#include "Core/Rendering/Camera.h"
+#include "Core/Rendering/Camera/Camera.h"
 #include "Core/Rendering/Renderer.h"
 
 Chunk::Chunk(glm::vec2 position, TerrainGenerator* TGRef, const int id)

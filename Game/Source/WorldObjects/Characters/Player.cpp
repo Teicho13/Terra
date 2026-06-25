@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "../../CameraManager.h"
+#include "Core/Rendering/Camera/CameraManager.h"
 #include "../../Terrain/Chunk.h"
 #include "../../Terrain/TerrainGenerator.h"
 #include "Core/Application.h"

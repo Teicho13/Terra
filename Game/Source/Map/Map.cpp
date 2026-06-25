@@ -7,7 +7,7 @@
 #include "Core/Application.h"
 #include "Core/ResourceManager.h"
 #include "Core/Rendering/Renderer.h"
-#include "Core/Rendering/Camera.h"
+#include "Core/Rendering/Camera/Camera.h"
 
 void Map::SetMapData(const std::string& mapDataPath)
 {

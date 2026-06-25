@@ -1,5 +1,3 @@
-#define GLM_ENABLE_EXPERIMENTAL
-
 #include "World.h"
 #include "Core/Application.h"
 #include <imgui.h>
@@ -16,7 +14,7 @@ static Terra::WindowSpecs GetWindowSpecs()
     return Terra::Application::GetApplication()->GetWindow()->GetWindowSpecs();
 }
 
-World::World() : m_camera(0 * 1.0f,static_cast<float>(GetWindowSpecs().width) * 1.0f,0,static_cast<float>(GetWindowSpecs().height) * 1.0f)
+World::World() : m_CameraManager(static_cast<float>(GetWindowSpecs().width),static_cast<float>(GetWindowSpecs().height))
 {
     m_Player = std::make_unique<Player>(Terra::FileIO::GetScuffedMonFile(R"(Characters\Player\player-idle.png)"));
 }
@@ -28,12 +26,13 @@ World::~World()
 
 void World::Update(float DeltaTime)
 {
+    m_CameraManager.Update(DeltaTime);
     m_Player->Update(DeltaTime);
 }
 
 void World::Render()
 {
-    Terra::Renderer::RenderScene(m_camera);
+    Terra::Renderer::RenderScene(m_CameraManager.GetCamera());
     //Draw all gathered indices.
     m_Player->Draw();
     

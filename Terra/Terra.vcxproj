@@ -205,7 +205,8 @@ xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-
     <ClInclude Include="Source\Core\Application.h" />
     <ClInclude Include="Source\Core\FileIO.h" />
     <ClInclude Include="Source\Core\Rendering\Buffer.h" />
-    <ClInclude Include="Source\Core\Rendering\Camera.h" />
+    <ClInclude Include="Source\Core\Rendering\Camera\Camera.h" />
+    <ClInclude Include="Source\Core\Rendering\Camera\CameraManager.h" />
     <ClInclude Include="Source\Core\Rendering\Renderer.h" />
     <ClInclude Include="Source\Core\Rendering\Shader.h" />
     <ClInclude Include="Source\Core\Rendering\Texture.h" />
@@ -230,7 +231,8 @@ xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-
     <ClCompile Include="Source\Core\FileIO.cpp" />
     <ClCompile Include="Source\Core\glad.c" />
     <ClCompile Include="Source\Core\Rendering\Buffer.cpp" />
-    <ClCompile Include="Source\Core\Rendering\Camera.cpp" />
+    <ClCompile Include="Source\Core\Rendering\Camera\Camera.cpp" />
+    <ClCompile Include="Source\Core\Rendering\Camera\CameraManager.cpp" />
     <ClCompile Include="Source\Core\Rendering\Renderer.cpp" />
     <ClCompile Include="Source\Core\Rendering\Shader.cpp" />
     <ClCompile Include="Source\Core\Rendering\Texture.cpp" />

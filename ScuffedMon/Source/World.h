@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "Core/Scene.h"
-#include "Core/Rendering/Camera.h"
+#include "Core/Rendering/Camera/CameraManager.h"
 
 class Player;
 class World : public Terra::Scene
@@ -14,6 +14,6 @@ public:
     void Render() override;
 
 private:
-    Terra::Camera m_camera;
+    CameraManager m_CameraManager;
     std::unique_ptr<Player> m_Player = nullptr;
 };

@@ -1,6 +1,6 @@
 #pragma once
 #include "AnimatedSprite.h"
-#include "Core/Rendering/Camera.h"
+#include "Core/Rendering/Camera/Camera.h"
 
 class TerrainGenerator;
 class CameraManager;

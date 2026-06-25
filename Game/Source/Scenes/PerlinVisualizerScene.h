@@ -2,7 +2,7 @@
 #include <PerlinNoise.hpp>
 
 #include "Core/Scene.h"
-#include "../CameraManager.h"
+#include "Core/Rendering/Camera/CameraManager.h"
 
 class PerlinVisualizerScene : public Terra::Scene
 {

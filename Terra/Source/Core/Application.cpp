@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 
 #include "DeltaTime.h"
+#include "Input.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -46,6 +47,7 @@ namespace Terra
     {
         for (const std::unique_ptr<Scene>& CurrentScene : Application::GetApplication()->GetScenes())
         {
+            Input::OnKey(key,action, mods);
             switch (action)
             {
                 case GLFW_PRESS:
@@ -73,6 +75,7 @@ namespace Terra
         glfwGetCursorPos(window,&xpos,&ypos);
         for (const std::unique_ptr<Scene>& CurrentScene : Application::GetApplication()->GetScenes())
         {
+            Input::OnMouseClick(button,action,static_cast<float>(xpos),static_cast<float>(ypos));
             if (action == GLFW_PRESS)
             {
                CurrentScene->OnMouseClicked(button, mods,static_cast<float>(xpos),static_cast<float>(ypos));
@@ -140,7 +143,8 @@ namespace Terra
         {
             //Update current time and calculate new delta time
             deltaTime.UpdateTime();
-            
+
+            Input::BeginInputFrame();
             glfwPollEvents();
 
             //Early exit out if we closed window

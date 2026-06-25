@@ -204,6 +204,7 @@ xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-
     <ClInclude Include="Source\Core\Animation.h" />
     <ClInclude Include="Source\Core\Application.h" />
     <ClInclude Include="Source\Core\FileIO.h" />
+    <ClInclude Include="Source\Core\Input.h" />
     <ClInclude Include="Source\Core\Rendering\Buffer.h" />
     <ClInclude Include="Source\Core\Rendering\Camera\Camera.h" />
     <ClInclude Include="Source\Core\Rendering\Camera\CameraManager.h" />
@@ -230,6 +231,7 @@ xcopy /E /D /Y "$(ProjectDir)Resources" "$(SolutionDir)bin\out\$(Configuration)-
     <ClCompile Include="Source\Core\Application.cpp" />
     <ClCompile Include="Source\Core\FileIO.cpp" />
     <ClCompile Include="Source\Core\glad.c" />
+    <ClCompile Include="Source\Core\Input.cpp" />
     <ClCompile Include="Source\Core\Rendering\Buffer.cpp" />
     <ClCompile Include="Source\Core\Rendering\Camera\Camera.cpp" />
     <ClCompile Include="Source\Core\Rendering\Camera\CameraManager.cpp" />

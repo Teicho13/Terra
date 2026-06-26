@@ -2,11 +2,11 @@
 
 #include "Core/FileIO.h"
 #include "Core/ResourceManager.h"
+#include "Core/Events/Input.h"
 
 Player::Player(const std::string& sprite) : m_AnimatedSprite(sprite,1)
 {
     m_AnimatedSprite.SetScale({32.f,32.f,0.f});
-    m_AnimatedSprite.SetFlipX(true);
     m_AnimatedSprite.SetPosition({32.f,32.f,0.f});
     auto& anim = m_AnimatedSprite.GetAnimation();
     anim.SetLooped(true);
@@ -19,6 +19,26 @@ Player::Player(const std::string& sprite) : m_AnimatedSprite(sprite,1)
 void Player::Update(const float dt)
 {
     m_AnimatedSprite.Update(dt);
+
+    if (Terra::Input::IsKeyDown(Terra::InputKey::W))
+    {
+        SwapAnimation("walk-up");
+    }
+
+    if (Terra::Input::IsKeyDown(Terra::InputKey::A))
+    {
+        SwapAnimation("walk-left");
+    }
+
+    if (Terra::Input::IsKeyDown(Terra::InputKey::S))
+    {
+        SwapAnimation("walk-down");
+    }
+
+    if (Terra::Input::IsKeyDown(Terra::InputKey::D))
+    {
+        SwapAnimation("walk-right");
+    }
 }
 
 void Player::Draw() const

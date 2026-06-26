@@ -6,7 +6,8 @@
 #include <glad/glad.h>
 
 #include "DeltaTime.h"
-#include "Input.h"
+#include "Events/Input.h"
+#include "Events/Interfaces/InputListener.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -27,7 +28,10 @@ namespace Terra
     {
         for (const std::unique_ptr<Scene>& CurrentScene : Application::GetApplication()->GetScenes())
         {
-            CurrentScene->OnMouseScroll(xoffset, yoffset);
+            if (auto* inputListener = dynamic_cast<InputListener*>(CurrentScene.get()))
+            {
+                inputListener->OnMouseScroll(xoffset, yoffset);
+            }
         }
     }
 
@@ -38,34 +42,40 @@ namespace Terra
 
         if (!Application::GetApplication()->GetScenes().empty())
         {
-            const auto& currentScene = Application::GetApplication()->GetScenes()[0];
-            currentScene->OnScreenResize(static_cast<float>(width), static_cast<float>(height));
+            const auto& CurrentScene = Application::GetApplication()->GetScenes()[0];
+            if (auto* inputListener = dynamic_cast<InputListener*>(CurrentScene.get()))
+            {
+                inputListener->OnScreenResize(static_cast<float>(width), static_cast<float>(height)); 
+            }
+            
         }
     }
 
     static void GLFWKeyCallback(GLFWwindow* window, const int key, const int scancode, const int action, const int mods)
     {
+        Input::OnKey(key,action, mods);
         for (const std::unique_ptr<Scene>& CurrentScene : Application::GetApplication()->GetScenes())
         {
-            Input::OnKey(key,action, mods);
-            switch (action)
+            if (auto* inputListener = dynamic_cast<InputListener*>(CurrentScene.get()))
             {
+                switch (action)
+                {
                 case GLFW_PRESS:
-                    CurrentScene->OnInputPressed(key,scancode, mods);
-                break;
+                    inputListener->OnInputPressed(key,scancode, mods);
+                    break;
                 
                 case GLFW_REPEAT:
-                    CurrentScene->OnInputHeld(key,scancode, mods);
-                break;
+                    inputListener->OnInputHeld(key, scancode, mods);
+                    break;
                 
                 case GLFW_RELEASE:
-                    CurrentScene->OnInputReleased(key,scancode, mods);
-                break;
+                    inputListener->OnInputReleased(key, scancode, mods);
+                    break;
 
                 default:
-                break;
+                    break;
+                }
             }
-            
         }
     }
 
@@ -73,17 +83,20 @@ namespace Terra
     {
         double xpos, ypos;
         glfwGetCursorPos(window,&xpos,&ypos);
+        Input::OnMouseClick(button,action,static_cast<float>(xpos),static_cast<float>(ypos));
         for (const std::unique_ptr<Scene>& CurrentScene : Application::GetApplication()->GetScenes())
         {
-            Input::OnMouseClick(button,action,static_cast<float>(xpos),static_cast<float>(ypos));
-            if (action == GLFW_PRESS)
+            if (auto* inputListener = dynamic_cast<InputListener*>(CurrentScene.get()))
             {
-               CurrentScene->OnMouseClicked(button, mods,static_cast<float>(xpos),static_cast<float>(ypos));
-            }
+                if (action == GLFW_PRESS)
+                {
+                    inputListener->OnMouseClicked(button, mods,static_cast<float>(xpos),static_cast<float>(ypos));
+                }
 
-            if (action == GLFW_RELEASE)
-            {
-               CurrentScene->OnMouseReleased(button, mods,static_cast<float>(xpos),static_cast<float>(ypos));
+                if (action == GLFW_RELEASE)
+                {
+                    inputListener->OnMouseReleased(button, mods,static_cast<float>(xpos),static_cast<float>(ypos));
+                }
             }
         }
         

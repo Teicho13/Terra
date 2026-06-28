@@ -12,6 +12,14 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/out")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/out")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/out")
 
+if(MSVC)
+    configure_file(
+        "${CMAKE_SOURCE_DIR}/CMake/Directory.Build.targets.in"
+        "${CMAKE_BINARY_DIR}/Directory.Build.targets"
+        @ONLY
+    )
+endif()
+
 find_package(OpenGL REQUIRED)
 
 add_library(glfw STATIC IMPORTED GLOBAL)

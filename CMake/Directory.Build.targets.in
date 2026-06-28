@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
+    <IntDir>@CMAKE_SOURCE_DIR@/bin/int/$(Configuration)/$(ProjectName)/</IntDir>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
+    <ClCompile>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
+    </ClCompile>
+    <Midl>
+      <OutputDirectory>$(IntDir)</OutputDirectory>
+    </Midl>
+  </ItemDefinitionGroup>
+</Project>
